@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
@@ -19,25 +20,47 @@ public class GenericTileEntity extends TileEntity implements IInventory {
 
     private final NonNullList<ItemStack> inventory;
 
-    private final int inputSlots;
-    private final int outputSlots;
-    private final int inventorySize;
+    public final int inputSlots;
+    public final int outputSlots;
+    public final int fuelSlots;
+    public final int inventorySize;
 
     private final Block block;
 
     private final String customName;
 
+    public final IRecipe recipes;
 
-    public GenericTileEntity( int inputSlots , int outputSlots , Block block ) {
-        this( inputSlots , outputSlots , block , null );
+    /**
+     * constructor
+     * @param inputSlots the number of input slots (does not include fuel slots)
+     * @param outputSlots the number of output slots
+     * @param fuelSlots the number of fuel slots
+     * @param block the block this tile entity belongs to
+     * @param recipes the recipes for this tile entity (can be null, e.g. a chest)
+     */
+    public GenericTileEntity( int inputSlots , int outputSlots , int fuelSlots , Block block , @Nullable IRecipe recipes ) {
+        this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
     }
 
-    public GenericTileEntity( int inputSlots , int outputSlots , Block block , String customName ) {
+    /**
+     * constructor
+     * @param inputSlots the number of input slots (does not include fuel slots)
+     * @param outputSlots the number of output slots
+     * @param fuelSlots the number of fuel slots
+     * @param block the block this tile entity belongs to
+     * @param recipes the recipes for this tile entity (can be null, e.g. a chest)
+     * @param customName the custom name for this tile entity (can be null; in case of null the unlocalized name of the block gets used)
+     */
+    public GenericTileEntity( int inputSlots , int outputSlots , int fuelSlots , Block block , @Nullable IRecipe recipes , @Nullable String customName ) {
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
-        this.inventorySize = this.inputSlots + this.outputSlots;
+        this.fuelSlots = fuelSlots;
+        this.inventorySize = this.inputSlots + this.outputSlots + this.fuelSlots;
 
         this.block = block;
+
+        this.recipes = recipes;
 
         this.customName = Methods.newUnlocalizedName( customName );
 

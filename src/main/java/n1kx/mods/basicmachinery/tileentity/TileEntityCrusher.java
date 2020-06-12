@@ -7,11 +7,12 @@ import net.minecraft.util.ITickable;
 public class TileEntityCrusher extends GenericTileEntity implements ITickable {
 
     public TileEntityCrusher() {
-        super( 1 , 1 , BlockList.CRUSHER );
+        super( 1 , 1 , 1 , BlockList.CRUSHER );
     }
 
     @Override
     public void update() {
         //TODO ahm jeah implement an update method... maybe??
     }
+
 }
