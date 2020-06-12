@@ -28,7 +28,7 @@ public class BasicMachinery {
     @SidedProxy( clientSide = "n1kx.mods.basicmachinery.proxy.ClientProxy" , serverSide = "n1kx.mods.basicmachinery.proxy.ServerProxy" )
     public static CommonProxy proxy;
 
-    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs( "learnmod" ) {
+    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs( "basicmachinery" ) {
         @Override
         public ItemStack getTabIconItem() {
             return new ItemStack( Blocks.FURNACE );
