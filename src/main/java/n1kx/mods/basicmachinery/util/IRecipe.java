@@ -5,5 +5,5 @@ import com.google.common.collect.Table;
 import net.minecraft.item.ItemStack;
 
 public interface IRecipe {
-
+    ItemStack getRecipe( ItemStack stack );
 }
