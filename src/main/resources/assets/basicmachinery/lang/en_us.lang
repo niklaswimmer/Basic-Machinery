@@ -1,0 +1,5 @@
+itemGroup.basicmachinery=Learn Mod
+
+item.basicmachinery.iron_crushed.name=Crushed Iron
+
+tile.basicmachinery.crusher.name=Crusher

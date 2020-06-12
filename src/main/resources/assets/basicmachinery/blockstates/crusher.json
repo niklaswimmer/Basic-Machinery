@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "normal": {
+      "model": "basicmachinery:crusher"
+    },
+    "facing=north": {
+      "model": "basicmachinery:crusher"
+    },
+    "facing=east": {
+      "model": "basicmachinery:crusher",
+      "y": 90
+    },
+    "facing=south": {
+        "model": "basicmachinery:crusher",
+        "y": 180
+      },
+    "facing=west": {
+      "model": "basicmachinery:crusher",
+      "y": 270
+    }
+  }
+}
