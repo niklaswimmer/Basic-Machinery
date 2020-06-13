@@ -1,7 +1,7 @@
 package n1kx.mods.basicmachinery.block;
 
 import n1kx.mods.basicmachinery.tileentity.TileEntityCrusher;
-import n1kx.mods.basicmachinery.util.GenericBlock;
+import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -25,8 +25,8 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
-    public BlockCrusher( String name , Material material ) {
-        super( name , material );
+    public BlockCrusher( String name , Material material , int guiID ) {
+        super( name , material , guiID );
     }
 
     @Override
