@@ -20,8 +20,8 @@ public class RecipesCrusher implements IRecipes {
     private final ArrayList<ItemStack> inputList = Lists.newArrayList();
 
     public RecipesCrusher() {
-        this.addRecipe( new ItemStack( Items.IRON_INGOT ) , new ItemStack( ItemList.CRUSHED_IRON ) , 20 );
-        this.addRecipe( new ItemStack( Blocks.IRON_ORE ) , new ItemStack( ItemList.CRUSHED_IRON , 2 ) , 10 );
+        this.addRecipe( new ItemStack( Items.IRON_INGOT ) , new ItemStack( ItemList.CRUSHED_IRON ) , 200 );
+        this.addRecipe( new ItemStack( Blocks.IRON_ORE ) , new ItemStack( ItemList.CRUSHED_IRON , 2 ) , 300 );
     }
 
     @Override

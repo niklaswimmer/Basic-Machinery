@@ -3,9 +3,9 @@ package n1kx.mods.basicmachinery.container;
 import n1kx.mods.basicmachinery.tileentity.TileEntityCrusher;
 import n1kx.mods.basicmachinery.util.generics.GenericContainer;
 import n1kx.mods.basicmachinery.util.generics.IHasFields;
-import n1kx.mods.basicmachinery.util.generics.slots.GenericFuelSlot;
-import n1kx.mods.basicmachinery.util.generics.slots.GenericInputSlot;
-import n1kx.mods.basicmachinery.util.generics.slots.GenericOutputSlot;
+import n1kx.mods.basicmachinery.util.generics.slot.GenericFuelSlot;
+import n1kx.mods.basicmachinery.util.generics.slot.GenericInputSlot;
+import n1kx.mods.basicmachinery.util.generics.slot.GenericOutputSlot;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;
 
