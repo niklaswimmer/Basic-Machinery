@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics;
 
 import mcp.MethodsReturnNonnullByDefault;
+import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -27,31 +28,15 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
     }
 
     @Override
-    public int getField( int id ) {
-        return this.progress;
-    }
-
-    @Override
-    public void setField( int id , int value ) {
-        this.progress = value;
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 1;
-    }
-
-    @Override
     public void readFromNBT( NBTTagCompound compound ) {
-        super.readInventory( compound );
         if( compound.hasKey( "progress" ) ) progress = compound.getInteger( "progress" );
+        super.readFromNBT( compound );
     }
 
     @Override
     public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
-        super.writeInventory( compound );
         compound.setInteger( "progress", this.progress );
-        return compound;
+        return super.writeToNBT( compound );
     }
 
     @Override
@@ -89,14 +74,17 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
             if( output != null ) {
                 boolean insertingPossible = true;
                 for( int i = 0 ; i < output.length ; i++ ) {
-                    if( !this.insertOutput( output[i] , i , false ) ) {
+                    if( !this.insertOutput( output[i] , i , true ) ) {
                         insertingPossible = false;
                         break;
                     }
                 }
                 if( insertingPossible ) {
                     for( int i = 0 ; i < output.length ; i++ ) {
-                        this.insertOutput( output[i] , i , true );
+                        this.insertOutput( output[i] , i , false );
+                    }
+                    for( int i = 0 ; i < inputs.length ; i++ ) {
+                        super.inputHandler.extractItem( i , 1 , false );
                     }
                 }
             }
@@ -106,22 +94,27 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
     public ItemStack[] getInputs() {
         ItemStack[] inputs = new ItemStack[super.inputSlots];
         for( int i = 0 ; i < inputs.length ; i++ ) {
-            inputs[i] = super.getStackInSlot( i );
+            inputs[i] = super.inputHandler.getStackInSlot( i );
         }
         return inputs;
     }
 
-    private boolean insertOutput( ItemStack output , int outputIndex , boolean insert ) {
-        ItemStack outputStack = super.getStackInSlot( super.inputSlots + super.fuelSlots + outputIndex );
-
-        if( !ItemStack.areItemStacksEqual( output , outputStack ) ) {
-            return false;
-        }
-        else if( insert ) {
-            outputStack.setCount( outputStack.getCount() + output.getCount() );
-        }
-
-        return true;
+    private boolean insertOutput( ItemStack output , int outputIndex , boolean simulate ) {
+        return ItemStack.areItemStacksEqual( super.outputHandler.insertItem( outputIndex , output , simulate ) , ItemStack.EMPTY );
     }
 
+    @Override
+    public int getField( int id ) {
+        return this.progress;
+    }
+
+    @Override
+    public void setField( int id , int value ) {
+        this.progress = value;
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 1;
+    }
 }

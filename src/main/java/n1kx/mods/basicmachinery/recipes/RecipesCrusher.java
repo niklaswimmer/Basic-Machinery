@@ -2,16 +2,14 @@ package n1kx.mods.basicmachinery.recipes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.list.ItemList;
 import n1kx.mods.basicmachinery.util.IRecipes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class RecipesCrusher implements IRecipes {
@@ -22,19 +20,25 @@ public class RecipesCrusher implements IRecipes {
     private final ArrayList<ItemStack> inputList = Lists.newArrayList();
 
     public RecipesCrusher() {
-        this.addRecipe( new ItemStack( Items.IRON_INGOT ) , new ItemStack( ItemList.CRUSHED_IRON ) , 200 );
-        this.addRecipe( new ItemStack( Blocks.IRON_ORE ) , new ItemStack( ItemList.CRUSHED_IRON , 2 ) , 300 );
+        this.addRecipe( new ItemStack( Items.IRON_INGOT ) , new ItemStack( ItemList.CRUSHED_IRON ) , 20 );
+        this.addRecipe( new ItemStack( Blocks.IRON_ORE ) , new ItemStack( ItemList.CRUSHED_IRON , 2 ) , 10 );
     }
 
     @Override
     public ItemStack[] getOutputs( ItemStack... inputs ) {
         if( inputs.length != 1 ) return new ItemStack[]{ ItemStack.EMPTY };
-        return new ItemStack[]{ recipeList.getOrDefault( inputs[0] , ItemStack.EMPTY ) };
+
+        ItemStack[] validatedInputs = this.validateInputs( inputs );
+
+        return new ItemStack[]{ recipeList.getOrDefault( validatedInputs[0] , ItemStack.EMPTY ).copy() };
     }
 
     @Override
     public int getWorkTime( ItemStack... inputs ) {
-        return Integer.parseInt( workTimeList.getOrDefault( this.getOutputs( inputs )[0] , "-1" ) );
+        if( inputs.length != 1 ) return -1;
+
+        ItemStack[] validatedInputs = this.validateInputs( inputs );
+        return Integer.parseInt( this.workTimeList.getOrDefault( this.recipeList.getOrDefault( validatedInputs[0] , ItemStack.EMPTY ) , "-1" ) );
     }
 
     @Override
@@ -58,7 +62,7 @@ public class RecipesCrusher implements IRecipes {
 
         boolean itemAlreadyInInputList = false;
         for( int i = 0 ; i < this.inputList.size() ; i++ ) {
-            if( input.isItemEqual( this.inputList.get( i ) ) ) {
+            if( ItemStack.areItemStacksEqual( input , this.inputList.get( i ) ) ) {
                 itemAlreadyInInputList = true;
                 break;
             }
@@ -66,6 +70,24 @@ public class RecipesCrusher implements IRecipes {
         if( !itemAlreadyInInputList ) {
             this.inputList.add( input );
         }
+    }
+
+    private ItemStack[] validateInputs( ItemStack... inputs ) {
+        ItemStack[] validatedInputs = new ItemStack[ inputs.length ];
+
+        for( int i = 0 ; i < inputs.length ; i++ ) {
+            for( int j = 0 ; j < inputList.size() ; j++ ) {
+                if( inputs[i].getItem().getUnlocalizedName( inputs[i] ).equals( this.inputList.get( j ).getItem().getUnlocalizedName( this.inputList.get( j ) ) ) ) {
+                    validatedInputs[i] = this.inputList.get( j );
+                    break;
+                }
+            }
+            if( validatedInputs[i] == null ) {
+                validatedInputs[i] = new ItemStack( Items.AIR );
+            }
+        }
+
+        return validatedInputs;
     }
 
 }
