@@ -1,7 +1,10 @@
 package n1kx.mods.basicmachinery.util.generics;
 
+import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.Methods;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityFueledMachine;
 import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityInventory;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityMachine;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -9,12 +12,12 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Objects;
 
-public class GenericGui extends GuiContainer {
+public abstract class GenericGui extends GuiContainer {
 
     public final ResourceLocation texture;
 
-    private final InventoryPlayer playerInventory;
-    private final GenericTileEntityInventory tileEntity;
+    protected final InventoryPlayer playerInventory;
+    protected final GenericTileEntityInventory tileEntity;
 
 
     public GenericGui( GenericContainer inventorySlotsIn ) {
@@ -36,5 +39,29 @@ public class GenericGui extends GuiContainer {
         GlStateManager.color( 1.0f , 1.0f , 1.0f , 1.0f );
         super.mc.getTextureManager().bindTexture( this.texture );
         super.drawTexturedModalRect( super.guiLeft , super.guiTop , 0 , 0 , super.xSize , super.ySize );
+    }
+
+    protected int getProgressScaled( int pixels ) {
+        if( this.tileEntity instanceof GenericTileEntityMachine ) {
+            return this.getCalc( 0 , 1 , ++pixels);
+        }
+        return -1;
+    }
+
+    protected int getBurnTimeScaled( int pixels ) {
+        if( this.tileEntity instanceof GenericTileEntityFueledMachine ) {
+            return this.getCalc( 2 , 3 , ++pixels );
+        }
+        return -1;
+    }
+
+    protected int getCalc( int field1Index , int field2Index , int pixels ) {
+        double field1 = this.tileEntity.getField( field1Index );
+        double field2 = this.tileEntity.getField( field2Index );
+
+        double div = field1 != 0 && field2 != 0 ? field1 / field2 : -1;
+        int calc = div == -1 ? -1 : (int)( div * pixels );
+
+        return calc;
     }
 }

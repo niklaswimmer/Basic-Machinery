@@ -12,7 +12,10 @@ import net.minecraft.inventory.IContainerListener;
 public class ContainerCrusher extends GenericContainer implements IHasFields {
 
     private final TileEntityCrusher tileEntity;
+    private int progressLeft;
     private int progress;
+    private int burnTimeLeft;
+    private int burnTime;
 
     public ContainerCrusher( InventoryPlayer playerInventory , TileEntityCrusher tileEntity ) {
         super( playerInventory , tileEntity );
@@ -34,9 +37,15 @@ public class ContainerCrusher extends GenericContainer implements IHasFields {
         {
             IContainerListener listener = this.listeners.get(i);
 
-            if( this.progress != this.tileEntity.getField( 0 ) ) listener.sendWindowProperty( this , 0 , this.tileEntity.getField( 0 ) );
+            if( this.progressLeft != this.tileEntity.getField( 0 ) ) listener.sendWindowProperty( this , 0 , this.tileEntity.getField( 0 ) );
+            if( this.progress != this.tileEntity.getField( 1 ) ) listener.sendWindowProperty( this , 1 , this.tileEntity.getField( 1 ) );
+            if( this.burnTimeLeft != this.tileEntity.getField( 2 ) ) listener.sendWindowProperty( this , 2 , this.tileEntity.getField( 2 ) );
+            if( this.burnTime != this.tileEntity.getField( 3 ) ) listener.sendWindowProperty( this , 3 , this.tileEntity.getField( 3 ) );
         }
 
-        this.progress = this.tileEntity.getField( 0 );
+        this.progressLeft = this.tileEntity.getField( 0 );
+        this.progress = this.tileEntity.getField( 1 );
+        this.burnTimeLeft = this.tileEntity.getField( 2 );
+        this.burnTime = this.tileEntity.getField( 3 );
     }
 }

@@ -3,14 +3,14 @@ package n1kx.mods.basicmachinery.util.generics.tileentity;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMachine {
 
-    private int burnTimeLeft;
+    protected int burnTimeLeft;
+    protected int burnTime;
 
     public GenericTileEntityFueledMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes );
@@ -28,19 +28,20 @@ public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMa
             if( this.burnTimeLeft > 0 ) {
                 this.burnTimeLeft--;
 
-                if( this.burnTimeLeft == 0 && super.progress - 1 > 0 ) {
+                if( this.burnTimeLeft == 0 && super.progressLeft - 1 > 0 ) {
                     this.burnTimeLeft = this.getNextBurnTime();
 
-                    if( this.burnTimeLeft == 0 && super.progress > 1 ) {
+                    if( this.burnTimeLeft == 0 && super.progressLeft > 1 ) {
+                        super.progressLeft = 0;
                         super.progress = 0;
                     }
                 }
                 flag = true;
             }
 
-            if( super.progress > 0 ) {
-                super.progress--;
-                if( super.progress == 0 ) {
+            if( super.progressLeft > 0 ) {
+                super.progressLeft--;
+                if( super.progressLeft == 0 ) {
                     this.attemptMachine();
                 }
                 flag = true;
@@ -62,12 +63,14 @@ public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMa
 
             if( progress > -1 ) {
                 if( this.burnTimeLeft > 0 ) {
+                    super.progressLeft = progress;
                     super.progress = progress;
                     flag = true;
                 }
                 else {
                     int nextBurnTime = this.getNextBurnTime();
                     if( nextBurnTime > 0 ) {
+                        super.progressLeft = progress;
                         super.progress = progress;
                         this.burnTimeLeft = nextBurnTime;
                         flag = true;
@@ -77,35 +80,6 @@ public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMa
 
             if( flag ) super.markDirty();
         }
-    }
-
-    @Override
-    public int getField( int id ) {
-        switch( id ) {
-            case 0:
-                return super.progress;
-            case 1:
-                return this.burnTimeLeft;
-            default:
-                return 0;
-        }
-    }
-
-    @Override
-    public void setField( int id , int value ) {
-        switch( id ) {
-            case 0:
-                super.progress = value;
-                break;
-            case 1:
-                this.burnTimeLeft = value;
-                break;
-        }
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 2;
     }
 
     public ItemStack[] getFuels() {
@@ -129,8 +103,48 @@ public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMa
 
         if( indexOfFuel != -1 ) {
             super.fuelHandler.extractItem( indexOfFuel , 1 , false );
+            this.burnTime = Methods.getFuelValue( fuels[indexOfFuel] );
             return Methods.getFuelValue( fuels[indexOfFuel] );
         }
         else return 0;
+    }
+
+    @Override
+    public int getField( int id ) {
+        switch( id ) {
+            case 0:
+                return super.progressLeft;
+            case 1:
+                return super.progress;
+            case 2:
+                return this.burnTimeLeft;
+            case 3:
+                return this.burnTime;
+            default:
+                return 0;
+        }
+    }
+
+    @Override
+    public void setField( int id , int value ) {
+        switch( id ) {
+            case 0:
+                super.progressLeft = value;
+                break;
+            case 1:
+                super.progress = value;
+                break;
+            case 2:
+                this.burnTimeLeft = value;
+                break;
+            case 3:
+                this.burnTime = value;
+                break;
+        }
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 4;
     }
 }

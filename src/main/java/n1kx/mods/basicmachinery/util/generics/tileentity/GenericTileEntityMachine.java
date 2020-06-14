@@ -14,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public abstract class GenericTileEntityMachine extends GenericTileEntityInventory implements ITickable {
 
+    protected int progressLeft;
     protected int progress;
 
     protected GenericTileEntityMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
@@ -23,28 +24,28 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
     protected GenericTileEntityMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
 
-        this.progress = 0;
+        this.progressLeft = 0;
     }
 
     @Override
     public void readFromNBT( NBTTagCompound compound ) {
-        if( compound.hasKey( "progress" ) ) progress = compound.getInteger( "progress" );
+        if( compound.hasKey( "progress" ) ) progressLeft = compound.getInteger( "progress" );
         super.readFromNBT( compound );
     }
 
     @Override
     public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
-        compound.setInteger( "progress", this.progress );
+        compound.setInteger( "progress", this.progressLeft );
         return super.writeToNBT( compound );
     }
 
     @Override
     public void update() {
         if( !super.world.isRemote ) {
-            if( this.progress > 0 ) {
-                this.progress--;
+            if( this.progressLeft > 0 ) {
+                this.progressLeft--;
 
-                if( this.progress == 0 ) {
+                if( this.progressLeft == 0 ) {
                     this.attemptMachine();
                 }
 
@@ -60,7 +61,10 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
             ItemStack[] inputs = this.getInputs();
 
             int progress = this.recipes.getWorkTime( inputs );
-            if( progress > -1 ) this.progress = progress;
+            if( progress > -1 ) {
+                this.progressLeft = progress;
+                this.progress = progress;
+            }
 
             super.markDirty();
         }
@@ -68,6 +72,8 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
 
     public void attemptMachine() {
         if( super.recipes != null ) {
+            this.progress = 0;
+
             ItemStack[] inputs = this.getInputs();
 
             ItemStack[] output = super.recipes.getOutputs( inputs );
@@ -107,16 +113,30 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
 
     @Override
     public int getField( int id ) {
-        return id == 0 ? this.progress : 0;
+        switch( id ) {
+            case 0:
+                return this.progressLeft;
+            case 1:
+                return this.progress;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public void setField( int id , int value ) {
-        if( id == 0 ) this.progress = value;
+        switch( id ) {
+            case 0:
+                this.progressLeft = value;
+                break;
+            case 1:
+                this.progress = value;
+                break;
+        }
     }
 
     @Override
     public int getFieldCount() {
-        return 1;
+        return 2;
     }
 }
