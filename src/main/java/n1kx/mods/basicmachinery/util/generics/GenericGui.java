@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics;
 
 import n1kx.mods.basicmachinery.util.Methods;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityInventory;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;

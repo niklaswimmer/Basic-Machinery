@@ -1,9 +1,9 @@
-package n1kx.mods.basicmachinery.util.generics;
+package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
+import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

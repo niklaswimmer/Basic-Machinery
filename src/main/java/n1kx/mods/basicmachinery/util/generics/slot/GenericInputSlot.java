@@ -1,4 +1,4 @@
-package n1kx.mods.basicmachinery.util.generics.slots;
+package n1kx.mods.basicmachinery.util.generics.slot;
 
 import n1kx.mods.basicmachinery.util.IRecipes;
 import net.minecraft.inventory.IInventory;

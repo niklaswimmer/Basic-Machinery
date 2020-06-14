@@ -5,6 +5,7 @@ import n1kx.mods.basicmachinery.list.BlockList;
 import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
 import n1kx.mods.basicmachinery.util.IHasModel;
 import n1kx.mods.basicmachinery.util.Methods;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityInventory;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

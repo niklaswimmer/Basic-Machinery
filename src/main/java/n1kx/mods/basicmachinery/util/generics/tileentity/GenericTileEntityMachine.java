@@ -1,9 +1,8 @@
-package n1kx.mods.basicmachinery.util.generics;
+package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
-import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.IRecipes;
-import net.minecraft.block.Block;
+import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -15,7 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public abstract class GenericTileEntityMachine extends GenericTileEntityInventory implements ITickable {
 
-    private int progress;
+    protected int progress;
 
     protected GenericTileEntityMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         this( inputSlots , outputSlots , fuelSlots , block, recipes , null );
@@ -45,7 +44,7 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
             if( this.progress > 0 ) {
                 this.progress--;
 
-                if( this.progress <= 0 ) {
+                if( this.progress == 0 ) {
                     this.attemptMachine();
                 }
 
@@ -62,6 +61,8 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
 
             int progress = this.recipes.getWorkTime( inputs );
             if( progress > -1 ) this.progress = progress;
+
+            super.markDirty();
         }
     }
 
@@ -86,6 +87,7 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
                     for( int i = 0 ; i < inputs.length ; i++ ) {
                         super.inputHandler.extractItem( i , 1 , false );
                     }
+                    this.startMachine();
                 }
             }
         }
@@ -99,18 +101,18 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
         return inputs;
     }
 
-    private boolean insertOutput( ItemStack output , int outputIndex , boolean simulate ) {
+    protected boolean insertOutput( ItemStack output , int outputIndex , boolean simulate ) {
         return ItemStack.areItemStacksEqual( super.outputHandler.insertItem( outputIndex , output , simulate ) , ItemStack.EMPTY );
     }
 
     @Override
     public int getField( int id ) {
-        return this.progress;
+        return id == 0 ? this.progress : 0;
     }
 
     @Override
     public void setField( int id , int value ) {
-        this.progress = value;
+        if( id == 0 ) this.progress = value;
     }
 
     @Override
