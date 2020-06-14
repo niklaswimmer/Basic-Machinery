@@ -3,6 +3,7 @@ package n1kx.mods.basicmachinery.util;
 import n1kx.mods.basicmachinery.BasicMachinery;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -24,7 +25,7 @@ public class Methods {
     }
 
     public static boolean isFuel( @Nonnull ItemStack stack ) {
-        return ForgeEventFactory.getItemBurnTime( stack ) > 0;
+        return TileEntityFurnace.isItemFuel( stack );
     }
 
 }
