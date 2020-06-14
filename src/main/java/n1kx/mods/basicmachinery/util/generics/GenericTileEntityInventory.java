@@ -239,7 +239,7 @@ public abstract class GenericTileEntityInventory extends TileEntity implements I
 
     @Override
     public boolean isItemValidForSlot( int index , ItemStack stack ) {
-        return true;
+        return index < this.inputSlots + this.fuelSlots;
     }
 
     @Override
