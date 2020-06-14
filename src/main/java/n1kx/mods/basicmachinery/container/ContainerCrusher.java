@@ -8,7 +8,6 @@ import n1kx.mods.basicmachinery.util.generics.slots.GenericInputSlot;
 import n1kx.mods.basicmachinery.util.generics.slots.GenericOutputSlot;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;
-import net.minecraft.tileentity.TileEntity;
 
 public class ContainerCrusher extends GenericContainer implements IHasFields {
 
@@ -20,9 +19,9 @@ public class ContainerCrusher extends GenericContainer implements IHasFields {
 
         this.tileEntity = tileEntity;
 
-        super.addSlotToContainer( new GenericInputSlot( tileEntity , 0 , 56 , 17 , tileEntity.recipes ) );
-        super.addSlotToContainer( new GenericFuelSlot( tileEntity , 1 , 56 , 53 ) );
-        super.addSlotToContainer( new GenericOutputSlot( tileEntity , 2 , 116 , 35 ) );
+        super.addSlotToContainer( new GenericInputSlot( tileEntity , 0 , 90 , 17 , tileEntity.recipes ) );
+        super.addSlotToContainer( new GenericFuelSlot( tileEntity , 1 , 12 , 53 ) );
+        super.addSlotToContainer( new GenericOutputSlot( tileEntity , 2 , 90 , 53 ) );
 
         super.addInventorySlots();
     }

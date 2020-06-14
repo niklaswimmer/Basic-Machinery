@@ -56,7 +56,7 @@ public abstract class GenericContainer extends Container {
             }
             //if the slot is an output slot --> items will get moved to an inventory slot (if possible)
             else if( index >= this.tileEntity.inputSlots + this.tileEntity.fuelSlots && index < this.tileEntity.inventorySize ) {
-                if( !this.mergeItemStack( stack1 , this.tileEntity.inventorySize , 36 + this.tileEntity.inventorySize , false ) ) return ItemStack.EMPTY;
+                if( !this.mergeItemStack( stack1 , this.tileEntity.inventorySize , 36 + this.tileEntity.inventorySize , true ) ) return ItemStack.EMPTY;
             }
             //if the slot is a normal player inventory slot
             else if( index >= this.tileEntity.inventorySize ) {
