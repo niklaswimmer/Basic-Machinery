@@ -228,7 +228,7 @@ public abstract class GenericTileEntityInventory extends TileEntity implements I
 
     @Override
     public boolean isUsableByPlayer( EntityPlayer player ) {
-        return true;
+        return super.world.getTileEntity( super.pos ) == this && player.getDistanceSq( (double)super.pos.getX() + 0.5 , (double)super.pos.getY() + 0.5 , (double)super.pos.getZ() + 0.5 ) <= 64.0;
     }
 
     @Override
