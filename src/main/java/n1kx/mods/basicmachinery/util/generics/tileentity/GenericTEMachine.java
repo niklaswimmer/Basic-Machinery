@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
+import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.item.ItemStack;
@@ -59,9 +60,11 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
                 }
             }
             else {
-
                 this.progressLeft = 0;
                 this.progress = 0;
+                if( super.block instanceof IHasWorkingState ) {
+                    ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
+                }
             }
         }
     }
@@ -71,9 +74,14 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
             ItemStack[] inputs = this.getInputs();
 
             int progress = this.recipes.getWorkTime( inputs );
-            if( progress > -1 ) {
+            boolean canWork = progress > -1;
+            if( canWork ) {
                 this.progressLeft = progress;
                 this.progress = progress;
+            }
+
+            if( super.block instanceof IHasWorkingState ) {
+                ( (IHasWorkingState)super.block ).setWorkingState( canWork , super.world , super.pos );
             }
 
             super.markDirty();

@@ -3,19 +3,34 @@
     "normal": {
       "model": "basicmachinery:crusher"
     },
-    "facing=north": {
+    "facing=north,working=false": {
       "model": "basicmachinery:crusher"
     },
-    "facing=east": {
+    "facing=east,working=false": {
       "model": "basicmachinery:crusher",
       "y": 90
     },
-    "facing=south": {
+    "facing=south,working=false": {
         "model": "basicmachinery:crusher",
         "y": 180
       },
-    "facing=west": {
+    "facing=west,working=false": {
       "model": "basicmachinery:crusher",
+      "y": 270
+    },
+    "facing=north,working=true": {
+      "model": "basicmachinery:crusher_working"
+    },
+    "facing=east,working=true": {
+      "model": "basicmachinery:crusher_working",
+      "y": 90
+    },
+    "facing=south,working=true": {
+      "model": "basicmachinery:crusher_working",
+      "y": 180
+    },
+    "facing=west,working=true": {
+      "model": "basicmachinery:crusher_working",
       "y": 270
     }
   }

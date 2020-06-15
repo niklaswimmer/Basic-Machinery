@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
+import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
@@ -78,6 +79,9 @@ public abstract class GenericTEFueledMachine extends GenericTEMachine {
                 if( this.burnTimeLeft == 0 ) {
                     this.burnTime = 0;
                 }
+                if( super.block instanceof IHasWorkingState ) {
+                    ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
+                }
             }
         }
     }
@@ -89,22 +93,26 @@ public abstract class GenericTEFueledMachine extends GenericTEMachine {
 
             ItemStack[] inputs = this.getInputs();
             int progress = this.recipes.getWorkTime( inputs );
-
-            if( progress > -1 ) {
+            boolean canWork = progress > -1;
+            if( canWork ) {
                 if( this.burnTimeLeft > 0 ) {
                     super.progressLeft = progress;
                     super.progress = progress;
                     flag = true;
-                }
-                else {
+                } else {
                     int nextBurnTime = this.getNextBurnTime();
-                    if( nextBurnTime > 0 ) {
+                    canWork = nextBurnTime > 0;
+                    if( canWork ) {
                         super.progressLeft = progress;
                         super.progress = progress;
                         this.burnTimeLeft = nextBurnTime;
                         flag = true;
                     }
                 }
+            }
+
+            if( super.block instanceof IHasWorkingState ) {
+                ( (IHasWorkingState)super.block ).setWorkingState( canWork , super.world , super.pos );
             }
 
             if( flag ) super.markDirty();

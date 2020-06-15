@@ -1,10 +1,12 @@
 package n1kx.mods.basicmachinery.block;
 
 import n1kx.mods.basicmachinery.tileentity.TileEntityCrusher;
+import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -21,9 +23,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class BlockCrusher extends GenericBlock implements ITileEntityProvider {
+public class BlockCrusher extends GenericBlock implements ITileEntityProvider, IHasWorkingState {
 
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
+    public static final PropertyBool WORKING = PropertyBool.create( "working" );
 
     public BlockCrusher( String name , Material material , int guiID ) {
         super( name , material , guiID );
@@ -31,11 +34,16 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider {
         super.setHarvestLevel( "pickaxe" , 1 );
         super.setHardness( 3.5f );
         super.setResistance( 3.5f );
+
+        super.setDefaultState( super.blockState.getBaseState()
+                .withProperty( BlockCrusher.FACING , EnumFacing.NORTH )
+                .withProperty( BlockCrusher.WORKING , false )
+        );
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer( this , FACING );
+        return new BlockStateContainer( this , BlockCrusher.FACING , BlockCrusher.WORKING );
     }
 
     @Override
@@ -63,4 +71,20 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider {
     public boolean hasTileEntity( IBlockState state ) {
         return true;
     }
+
+    @Override
+    public void setWorkingState( boolean isWorking , World worldIn , BlockPos pos ) {
+        TileEntity tileEntity = worldIn.getTileEntity( pos );
+
+        worldIn.setBlockState( pos , super.getDefaultState()
+                .withProperty( BlockCrusher.FACING , worldIn.getBlockState( pos ).getValue( BlockCrusher.FACING ) )
+                .withProperty( BlockCrusher.WORKING , isWorking )
+        );
+
+        if( tileEntity != null ) {
+            tileEntity.validate();
+            worldIn.setTileEntity( pos , tileEntity );
+        }
+    }
+
 }
