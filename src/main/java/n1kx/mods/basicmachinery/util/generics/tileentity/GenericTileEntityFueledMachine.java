@@ -1,12 +1,17 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
+import mcp.MethodsReturnNonnullByDefault;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMachine {
 
     protected int burnTimeLeft;
@@ -18,6 +23,20 @@ public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMa
 
     public GenericTileEntityFueledMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
+    }
+
+    @Override
+    public void readFromNBT( NBTTagCompound compound ) {
+        if( compound.hasKey( "burnTimeLeft" ) ) this.burnTimeLeft = compound.getInteger( "burnTimeLeft" );
+        if( compound.hasKey( "burnTime" ) ) this.burnTime = compound.getInteger( "burnTime" );
+        super.readFromNBT( compound );
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
+        compound.setInteger( "burnTimeLeft" , this.burnTimeLeft );
+        compound.setInteger( "burnTime" , this.burnTime );
+        return super.writeToNBT( compound );
     }
 
     @Override

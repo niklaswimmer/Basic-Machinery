@@ -30,13 +30,15 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
 
     @Override
     public void readFromNBT( NBTTagCompound compound ) {
-        if( compound.hasKey( "progress" ) ) progressLeft = compound.getInteger( "progress" );
+        if( compound.hasKey( "progressLeft" ) ) this.progressLeft = compound.getInteger( "progressLeft" );
+        if( compound.hasKey( "progress" ) ) this.progress = compound.getInteger( "progress" );
         super.readFromNBT( compound );
     }
 
     @Override
     public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
-        compound.setInteger( "progress", this.progressLeft );
+        compound.setInteger( "progressLeft" , this.progressLeft );
+        compound.setInteger( "progress" , this.progress );
         return super.writeToNBT( compound );
     }
 
