@@ -1,10 +1,9 @@
 package n1kx.mods.basicmachinery.util.generics;
 
-import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.Methods;
-import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityFueledMachine;
-import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityInventory;
-import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityMachine;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEFueledMachine;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEInventory;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEMachine;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,7 +16,7 @@ public abstract class GenericGui extends GuiContainer {
     public final ResourceLocation texture;
 
     protected final InventoryPlayer playerInventory;
-    protected final GenericTileEntityInventory tileEntity;
+    protected final GenericTEInventory tileEntity;
 
 
     public GenericGui( GenericContainer inventorySlotsIn ) {
@@ -42,14 +41,14 @@ public abstract class GenericGui extends GuiContainer {
     }
 
     protected int getProgressScaled( int pixels ) {
-        if( this.tileEntity instanceof GenericTileEntityMachine ) {
+        if( this.tileEntity instanceof GenericTEMachine ) {
             return this.getCalc( 0 , 1 , ++pixels);
         }
         return -1;
     }
 
     protected int getBurnTimeScaled( int pixels ) {
-        if( this.tileEntity instanceof GenericTileEntityFueledMachine ) {
+        if( this.tileEntity instanceof GenericTEFueledMachine ) {
             return this.getCalc( 2 , 3 , ++pixels );
         }
         return -1;

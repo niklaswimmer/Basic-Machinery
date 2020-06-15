@@ -1,7 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics;
 
 import n1kx.mods.basicmachinery.util.Methods;
-import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTileEntityInventory;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -17,9 +17,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public abstract class GenericContainer extends Container {
 
     public final InventoryPlayer playerInventory;
-    public final GenericTileEntityInventory tileEntity;
+    public final GenericTEInventory tileEntity;
 
-    protected GenericContainer( InventoryPlayer playerInventory , GenericTileEntityInventory tileEntity ) {
+    protected GenericContainer( InventoryPlayer playerInventory , GenericTEInventory tileEntity ) {
         this.playerInventory = playerInventory;
         this.tileEntity = tileEntity;
     }

@@ -19,7 +19,7 @@ import java.util.Objects;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class GenericTileEntityInventory extends TileEntity implements IInventory {
+public abstract class GenericTEInventory extends TileEntity implements IInventory {
 
     protected final ItemStackHandler inputHandler, fuelHandler, outputHandler;
     protected final CombinedInvWrapper combinedHandler;
@@ -45,7 +45,7 @@ public abstract class GenericTileEntityInventory extends TileEntity implements I
      * @param block the block this tile entity belongs to
      * @param recipes the recipes for this tile entity (can be null, e.g. a chest)
      */
-    protected GenericTileEntityInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
+    protected GenericTEInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
     }
 
@@ -58,7 +58,7 @@ public abstract class GenericTileEntityInventory extends TileEntity implements I
      * @param recipes the recipes for this tile entity (can be null, e.g. a chest)
      * @param customName the custom name for this tile entity (can be null; in case of null the unlocalized name of the block gets used)
      */
-    protected GenericTileEntityInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
+    protected GenericTEInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
         this.fuelSlots = fuelSlots;
@@ -75,19 +75,19 @@ public abstract class GenericTileEntityInventory extends TileEntity implements I
         this.inputHandler = new ItemStackHandler( this.inputSlots ) {
             @Override
             protected void onContentsChanged( int slot ) {
-                GenericTileEntityInventory.super.markDirty();
+                GenericTEInventory.super.markDirty();
             }
         };
         this.fuelHandler = new ItemStackHandler( this.fuelSlots ) {
             @Override
             protected void onContentsChanged( int slot ) {
-                GenericTileEntityInventory.super.markDirty();
+                GenericTEInventory.super.markDirty();
             }
         };
         this.outputHandler = new ItemStackHandler( this.outputSlots ) {
             @Override
             protected void onContentsChanged( int slot ) {
-                GenericTileEntityInventory.super.markDirty();
+                GenericTEInventory.super.markDirty();
             }
         };
 

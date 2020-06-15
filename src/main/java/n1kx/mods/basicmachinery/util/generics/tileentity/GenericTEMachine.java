@@ -12,17 +12,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class GenericTileEntityMachine extends GenericTileEntityInventory implements ITickable {
+public abstract class GenericTEMachine extends GenericTEInventory implements ITickable {
 
     protected int progressLeft;
     protected int progress;
 
 
-    protected GenericTileEntityMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
+    protected GenericTEMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         this( inputSlots , outputSlots , fuelSlots , block, recipes , null );
     }
 
-    protected GenericTileEntityMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
+    protected GenericTEMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
 
         this.progressLeft = 0;
