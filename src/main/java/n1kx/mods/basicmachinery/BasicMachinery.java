@@ -32,7 +32,7 @@ public class BasicMachinery {
 
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs( "basicmachinery" ) {
         @Override
-        public ItemStack getTabIconItem() {
+        public ItemStack createIcon() {
             return new ItemStack( Blocks.FURNACE );
         }
     };

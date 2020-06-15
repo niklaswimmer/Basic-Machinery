@@ -14,7 +14,7 @@ public class GenericItem extends Item implements IHasModel {
 
     public GenericItem( String name ) {
         super.setRegistryName( Methods.newRegistryName( name ) );
-        super.setUnlocalizedName( Methods.newUnlocalizedName( name ) );
+        super.setTranslationKey( Methods.newUnlocalizedName( name ) );
         super.setCreativeTab( BasicMachinery.CREATIVE_TAB );
 
         ItemList.ITEMS.add( this );

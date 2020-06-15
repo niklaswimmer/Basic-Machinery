@@ -33,7 +33,7 @@ public class GenericBlock extends Block implements IHasModel {
         this.guiID = guiID;
 
         super.setRegistryName( Methods.newRegistryName( name ) );
-        super.setUnlocalizedName( Methods.newUnlocalizedName( name ) );
+        super.setTranslationKey( Methods.newUnlocalizedName( name ) );
         super.setCreativeTab( BasicMachinery.CREATIVE_TAB );
 
         BlockList.BLOCKS.add( this );

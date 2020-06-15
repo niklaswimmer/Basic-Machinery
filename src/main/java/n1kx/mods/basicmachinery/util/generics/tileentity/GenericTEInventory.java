@@ -265,7 +265,7 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
 
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.customName : Objects.requireNonNull( this.block.getRegistryName() ).getResourcePath();
+        return this.hasCustomName() ? this.customName : Objects.requireNonNull( this.block.getRegistryName() ).getPath();
     }
 
     @Override

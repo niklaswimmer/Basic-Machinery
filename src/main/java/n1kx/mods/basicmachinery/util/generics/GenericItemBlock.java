@@ -16,7 +16,7 @@ public class GenericItemBlock extends ItemBlock implements IHasModel {
         super( block );
 
         super.setRegistryName( Methods.newRegistryName( name ) );
-        super.setUnlocalizedName( Methods.newUnlocalizedName( name ) );
+        super.setTranslationKey( Methods.newUnlocalizedName( name ) );
 
         ItemList.ITEMS.add( this );
     }

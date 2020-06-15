@@ -22,7 +22,7 @@ public class Methods {
     }
 
     public static ResourceLocation newGuiLocation( ResourceLocation resourceLocation ) {
-        String name = resourceLocation.getResourcePath();
+        String name = resourceLocation.getPath();
         return new ResourceLocation( BasicMachinery.ID , "textures/gui/"+ name +".png" );
     }
 

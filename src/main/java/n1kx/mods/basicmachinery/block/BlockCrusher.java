@@ -62,7 +62,7 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider, I
 
     @Override
     public IBlockState getStateFromMeta( int meta ) {
-        return this.getDefaultState().withProperty( BlockCrusher.FACING , EnumFacing.getFront( meta ) );
+        return this.getDefaultState().withProperty( BlockCrusher.FACING , EnumFacing.byHorizontalIndex( meta ) );
     }
 
     @Nullable

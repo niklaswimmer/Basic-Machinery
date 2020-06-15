@@ -77,7 +77,7 @@ public class RecipesCrusher implements IRecipes {
 
         for( int i = 0 ; i < inputs.length ; i++ ) {
             for( int j = 0 ; j < inputList.size() ; j++ ) {
-                if( inputs[i].getItem().getUnlocalizedName( inputs[i] ).equals( this.inputList.get( j ).getItem().getUnlocalizedName( this.inputList.get( j ) ) ) ) {
+                if( inputs[i].getItem().getTranslationKey( inputs[i] ).equals( this.inputList.get( j ).getItem().getTranslationKey( this.inputList.get( j ) ) ) ) {
                     validatedInputs[i] = this.inputList.get( j );
                     break;
                 }
