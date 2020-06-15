@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "basicmachinery:blocks/crusher_top",
+    "north": "basicmachinery:blocks/crusher_front_burning",
+    "south": "basicmachinery:blocks/crusher_side",
+    "east": "basicmachinery:blocks/crusher_side",
+    "west": "basicmachinery:blocks/crusher_side",
+    "up": "basicmachinery:blocks/crusher_top",
+    "down": "basicmachinery:blocks/crusher_bottom"
+  }
+}

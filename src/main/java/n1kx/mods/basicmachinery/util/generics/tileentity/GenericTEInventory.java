@@ -4,6 +4,7 @@ import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -277,4 +278,8 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         InventoryHelper.dropInventoryItems( worldIn , pos , this );
     }
 
+    @Override
+    public boolean shouldRefresh( World world , BlockPos pos , IBlockState oldState , IBlockState newState ) {
+        return oldState.getBlock() != newState.getBlock();
+    }
 }

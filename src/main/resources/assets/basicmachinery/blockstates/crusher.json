@@ -3,34 +3,64 @@
     "normal": {
       "model": "basicmachinery:crusher"
     },
-    "facing=north,working=false": {
+    "burning=false,facing=north,working=false": {
       "model": "basicmachinery:crusher"
     },
-    "facing=east,working=false": {
+    "burning=false,facing=east,working=false": {
       "model": "basicmachinery:crusher",
       "y": 90
     },
-    "facing=south,working=false": {
+    "burning=false,facing=south,working=false": {
         "model": "basicmachinery:crusher",
         "y": 180
       },
-    "facing=west,working=false": {
+    "burning=false,facing=west,working=false": {
       "model": "basicmachinery:crusher",
       "y": 270
     },
-    "facing=north,working=true": {
+    "burning=false,facing=north,working=true": {
       "model": "basicmachinery:crusher_working"
     },
-    "facing=east,working=true": {
+    "burning=false,facing=east,working=true": {
       "model": "basicmachinery:crusher_working",
       "y": 90
     },
-    "facing=south,working=true": {
+    "burning=false,facing=south,working=true": {
       "model": "basicmachinery:crusher_working",
       "y": 180
     },
-    "facing=west,working=true": {
+    "burning=false,facing=west,working=true": {
       "model": "basicmachinery:crusher_working",
+      "y": 270
+    },
+    "burning=true,facing=north,working=false": {
+      "model": "basicmachinery:crusher_burning"
+    },
+    "burning=true,facing=east,working=false": {
+      "model": "basicmachinery:crusher_burning",
+      "y": 90
+    },
+    "burning=true,facing=south,working=false": {
+      "model": "basicmachinery:crusher_burning",
+      "y": 180
+    },
+    "burning=true,facing=west,working=false": {
+      "model": "basicmachinery:crusher_burning",
+      "y": 270
+    },
+    "burning=true,facing=north,working=true": {
+      "model": "basicmachinery:crusher_burning_working"
+    },
+    "burning=true,facing=east,working=true": {
+      "model": "basicmachinery:crusher_burning_working",
+      "y": 90
+    },
+    "burning=true,facing=south,working=true": {
+      "model": "basicmachinery:crusher_burning_working",
+      "y": 180
+    },
+    "burning=true,facing=west,working=true": {
+      "model": "basicmachinery:crusher_burning_working",
       "y": 270
     }
   }

@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
+import n1kx.mods.basicmachinery.util.IHasBurningState;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
@@ -55,6 +56,9 @@ public abstract class GenericTEFueledMachine extends GenericTEMachine {
                         if( this.burnTimeLeft == 0 && super.progressLeft > 1 ) {
                             super.progressLeft = 0;
                             super.progress = 0;
+                            if( super.block instanceof IHasBurningState ) {
+                                ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
+                            }
                         }
                     }
                     flag = true;
@@ -99,13 +103,17 @@ public abstract class GenericTEFueledMachine extends GenericTEMachine {
                     super.progressLeft = progress;
                     super.progress = progress;
                     flag = true;
-                } else {
+                }
+                else {
                     int nextBurnTime = this.getNextBurnTime();
                     canWork = nextBurnTime > 0;
                     if( canWork ) {
                         super.progressLeft = progress;
                         super.progress = progress;
                         this.burnTimeLeft = nextBurnTime;
+                        if( super.block instanceof IHasBurningState ) {
+                            ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
+                        }
                         flag = true;
                     }
                 }
