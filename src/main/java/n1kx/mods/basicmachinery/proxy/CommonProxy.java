@@ -43,4 +43,5 @@ public class CommonProxy {
         register.getRegistry().registerAll( ItemList.ITEMS.toArray( new Item[0] ) );
         register.getRegistry().registerAll( ItemList.ITEM_BLOCKS.toArray( new Item[0] ) );
     }
+
 }
