@@ -23,33 +23,43 @@ public abstract class GenericTileEntityFueledMachine extends GenericTileEntityMa
     @Override
     public void update() {
         if( !super.world.isRemote ) {
-            boolean flag = false;
+            if( super.areInputsPresent() ) {
+                boolean flag = false;
 
-            if( this.burnTimeLeft > 0 ) {
-                this.burnTimeLeft--;
+                if( this.burnTimeLeft > 0 ) {
+                    this.burnTimeLeft--;
 
-                if( this.burnTimeLeft == 0 && super.progressLeft - 1 > 0 ) {
-                    this.burnTimeLeft = this.getNextBurnTime();
+                    if( this.burnTimeLeft == 0 && super.progressLeft - 1 > 0 ) {
+                        this.burnTimeLeft = this.getNextBurnTime();
 
-                    if( this.burnTimeLeft == 0 && super.progressLeft > 1 ) {
-                        super.progressLeft = 0;
-                        super.progress = 0;
+                        if( this.burnTimeLeft == 0 && super.progressLeft > 1 ) {
+                            super.progressLeft = 0;
+                            super.progress = 0;
+                        }
                     }
+                    flag = true;
                 }
-                flag = true;
-            }
 
-            if( super.progressLeft > 0 ) {
-                super.progressLeft--;
-                if( super.progressLeft == 0 ) {
-                    this.attemptMachine();
+                if( super.progressLeft > 0 ) {
+                    super.progressLeft--;
+                    if( super.progressLeft == 0 ) {
+                        this.attemptMachine();
+                    }
+                    flag = true;
+                } else {
+                    this.startMachine();
                 }
-                flag = true;
-            } else {
-                this.startMachine();
-            }
 
-            if( flag ) super.markDirty();
+                if( flag ) super.markDirty();
+            }
+            else {
+                super.progressLeft = 0;
+                super.progress = 0;
+                this.burnTimeLeft--;
+                if( this.burnTimeLeft == 0 ) {
+                    this.burnTime = 0;
+                }
+            }
         }
     }
 

@@ -17,6 +17,7 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
     protected int progressLeft;
     protected int progress;
 
+
     protected GenericTileEntityMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         this( inputSlots , outputSlots , fuelSlots , block, recipes , null );
     }
@@ -42,16 +43,23 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
     @Override
     public void update() {
         if( !super.world.isRemote ) {
-            if( this.progressLeft > 0 ) {
-                this.progressLeft--;
+            if( this.areInputsPresent() ) {
+                if( this.progressLeft > 0 ) {
+                    this.progressLeft--;
 
-                if( this.progressLeft == 0 ) {
-                    this.attemptMachine();
+                    if( this.progressLeft == 0 ) {
+                        this.attemptMachine();
+                    }
+
+                    super.markDirty();
+                } else {
+                    this.startMachine();
                 }
+            }
+            else {
 
-                super.markDirty();
-            } else {
-                this.startMachine();
+                this.progressLeft = 0;
+                this.progress = 0;
             }
         }
     }
@@ -97,6 +105,19 @@ public abstract class GenericTileEntityMachine extends GenericTileEntityInventor
                 }
             }
         }
+    }
+
+    public boolean areInputsPresent() {
+        boolean areInputsPresent = false;
+
+        for( int i = 0 ; i < super.inputSlots ; i++ ) {
+            if( !ItemStack.areItemStacksEqual( super.inputHandler.getStackInSlot( i ) , ItemStack.EMPTY ) ) {
+                areInputsPresent = true;
+                break;
+            }
+        }
+
+        return areInputsPresent;
     }
 
     public ItemStack[] getInputs() {
