@@ -27,6 +27,10 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider {
 
     public BlockCrusher( String name , Material material , int guiID ) {
         super( name , material , guiID );
+
+        super.setHarvestLevel( "pickaxe" , 1 );
+        super.setHardness( 3.5f );
+        super.setResistance( 3.5f );
     }
 
     @Override

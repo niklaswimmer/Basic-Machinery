@@ -1,15 +1,19 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
+import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
@@ -19,7 +23,7 @@ import java.util.Objects;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class GenericTEInventory extends TileEntity implements IInventory {
+public abstract class GenericTEInventory extends TileEntity implements IInventory , IDropItemsOnBreak {
 
     protected final ItemStackHandler inputHandler, fuelHandler, outputHandler;
     protected final CombinedInvWrapper combinedHandler;
@@ -34,8 +38,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
     protected final String customName;
 
     public final IRecipes recipes;
-
-    public final int guiID;
 
     /**
      * constructor
@@ -67,8 +69,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         this.block = block;
 
         this.recipes = recipes;
-
-        this.guiID = block.guiID;
 
         this.customName = Methods.newUnlocalizedName( customName );
 
@@ -131,10 +131,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
 
     public boolean hasInputSlots() {
         return this.inputSlots > 0;
-    }
-
-    public int getGuiID() {
-        return this.guiID;
     }
 
     @Override
@@ -275,4 +271,10 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
     public boolean hasCustomName() {
         return this.customName != null;
     }
+
+    @Override
+    public void dropInventoryItems( World worldIn , BlockPos pos ) {
+        InventoryHelper.dropInventoryItems( worldIn , pos , this );
+    }
+
 }

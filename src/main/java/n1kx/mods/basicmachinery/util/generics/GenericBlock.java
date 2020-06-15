@@ -3,9 +3,9 @@ package n1kx.mods.basicmachinery.util.generics;
 import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.list.BlockList;
 import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
+import n1kx.mods.basicmachinery.util.IHasGui;
 import n1kx.mods.basicmachinery.util.IHasModel;
 import n1kx.mods.basicmachinery.util.Methods;
-import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEInventory;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -52,8 +52,8 @@ public class GenericBlock extends Block implements IHasModel {
         }
 
         TileEntity tileEntity = worldIn.getTileEntity( pos );
-        if( tileEntity instanceof GenericTEInventory ) {
-            playerIn.openGui( BasicMachinery.instance , ( (GenericTEInventory)tileEntity ).getGuiID() , worldIn , pos.getX() , pos.getY() , pos.getZ() );
+        if( tileEntity instanceof IHasGui ) {
+            playerIn.openGui( BasicMachinery.instance , ( (IHasGui)tileEntity ).getGuiID() , worldIn , pos.getX() , pos.getY() , pos.getZ() );
             return true;
         }
 
@@ -67,5 +67,7 @@ public class GenericBlock extends Block implements IHasModel {
         if( tileEntity instanceof IDropItemsOnBreak ) {
             ( (IDropItemsOnBreak)tileEntity ).dropInventoryItems( worldIn, pos );
         }
+
+        super.breakBlock( worldIn , pos , blockState );
     }
 }
