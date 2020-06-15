@@ -54,4 +54,9 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider {
     public TileEntity createNewTileEntity( World worldIn , int meta ) {
         return new TileEntityCrusher();
     }
+
+    @Override
+    public boolean hasTileEntity( IBlockState state ) {
+        return true;
+    }
 }

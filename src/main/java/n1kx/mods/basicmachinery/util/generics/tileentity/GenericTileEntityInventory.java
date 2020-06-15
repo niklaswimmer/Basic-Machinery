@@ -97,17 +97,19 @@ public abstract class GenericTileEntityInventory extends TileEntity implements I
     @Override
     public void readFromNBT( NBTTagCompound compound ) {
         this.readInventory( compound );
+        super.readFromNBT( compound );
     }
 
     @Override
     public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
-        return this.writeInventory( compound );
+        compound = this.writeInventory( compound );
+        return super.writeToNBT( compound );
     }
 
     public NBTTagCompound writeInventory( NBTTagCompound nbt ) {
-        nbt.setTag( "itemsIn" , inputHandler.serializeNBT());
+        nbt.setTag( "itemsIn" , inputHandler.serializeNBT() );
         nbt.setTag( "itemsFuel" , fuelHandler.serializeNBT() );
-        nbt.setTag("itemsOut", outputHandler.serializeNBT());
+        nbt.setTag( "itemsOut" , outputHandler.serializeNBT() );
         return nbt;
     }
 
