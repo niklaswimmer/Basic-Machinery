@@ -82,6 +82,9 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
                 this.burnTimeLeft--;
                 if( this.burnTimeLeft == 0 ) {
                     this.totalBurnTime = 0;
+                    if( super.block instanceof  IHasBurningState ) {
+                        ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
+                    }
                 }
                 if( super.block instanceof IHasWorkingState ) {
                     ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
