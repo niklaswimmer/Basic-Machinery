@@ -29,15 +29,20 @@ public abstract class GenericGui extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer( int mouseX , int mouseY ) {
-
-    }
+    protected void drawGuiContainerForegroundLayer( int mouseX , int mouseY ) {}
 
     @Override
     protected void drawGuiContainerBackgroundLayer( float partialTicks , int mouseX , int mouseY ) {
         GlStateManager.color( 1.0f , 1.0f , 1.0f , 1.0f );
         super.mc.getTextureManager().bindTexture( this.texture );
         super.drawTexturedModalRect( super.guiLeft , super.guiTop , 0 , 0 , super.xSize , super.ySize );
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawDefaultBackground();
+        super.drawScreen( mouseX , mouseY , partialTicks );
+        super.renderHoveredToolTip( mouseX , mouseY );
     }
 
     protected int getProgressScaled( int pixels ) {
@@ -59,8 +64,6 @@ public abstract class GenericGui extends GuiContainer {
         double field2 = this.tileEntity.getField( field2Index );
 
         double div = field1 != 0 && field2 != 0 ? field1 / field2 : -1;
-        int calc = div == -1 ? -1 : (int)( div * pixels );
-
-        return calc;
+        return div == -1 ? -1 : (int)( div * pixels );
     }
 }
