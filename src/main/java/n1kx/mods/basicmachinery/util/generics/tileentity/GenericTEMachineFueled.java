@@ -14,16 +14,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class GenericTEFueledMachine extends GenericTEMachine {
+public abstract class GenericTEMachineFueled extends GenericTEMachine {
 
     protected int burnTimeLeft;
     protected int burnTime;
 
-    public GenericTEFueledMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
+    public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes );
     }
 
-    public GenericTEFueledMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
+    public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
     }
 

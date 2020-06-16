@@ -1,7 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics;
 
 import n1kx.mods.basicmachinery.util.Methods;
-import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEFueledMachine;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEMachineFueled;
 import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEInventory;
 import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEMachine;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -53,7 +53,7 @@ public abstract class GenericGui extends GuiContainer {
     }
 
     protected int getBurnTimeScaled( int pixels ) {
-        if( this.tileEntity instanceof GenericTEFueledMachine ) {
+        if( this.tileEntity instanceof GenericTEMachineFueled ) {
             return this.getCalc( 2 , 3 , ++pixels );
         }
         return -1;
