@@ -46,7 +46,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
      * @param outputSlots the number of output slots
      * @param fuelSlots the number of fuel slots
      * @param block the block this tile entity belongs to
-     * @param recipes the recipes for this tile entity (can be null, e.g. a chest)
      */
     protected GenericTEInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
@@ -58,7 +57,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
      * @param outputSlots the number of output slots
      * @param fuelSlots the number of fuel slots
      * @param block the block this tile entity belongs to
-     * @param recipes the recipes for this tile entity (can be null, e.g. a chest)
      * @param customName the custom name for this tile entity (can be null; in case of null the unlocalized name of the block gets used)
      */
     protected GenericTEInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
@@ -69,9 +67,9 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
 
         this.block = block;
 
-        this.recipes = recipes;
-
         this.customName = Methods.newUnlocalizedName( customName );
+
+        this.recipes = recipes;
 
         this.inputHandler = new ItemStackHandler( this.inputSlots ) {
             @Override

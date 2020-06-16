@@ -15,31 +15,31 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public abstract class GenericTEMachine extends GenericTEInventory implements ITickable {
 
-    protected int progressLeft;
-    protected int progress;
-
+    protected int timeLeft;
+    protected int totalTimeNeeded;
 
     protected GenericTEMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
-        this( inputSlots , outputSlots , fuelSlots , block, recipes , null );
+        this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
     }
 
     protected GenericTEMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
 
-        this.progressLeft = 0;
+        this.timeLeft = 0;
+        this.totalTimeNeeded = 0;
     }
 
     @Override
     public void readFromNBT( NBTTagCompound compound ) {
-        if( compound.hasKey( "progressLeft" ) ) this.progressLeft = compound.getInteger( "progressLeft" );
-        if( compound.hasKey( "progress" ) ) this.progress = compound.getInteger( "progress" );
+        if( compound.hasKey( "timeLeft" ) ) this.timeLeft = compound.getInteger( "timeLeft" );
+        if( compound.hasKey( "totalTimeNeeded" ) ) this.totalTimeNeeded = compound.getInteger( "totalTimeNeeded" );
         super.readFromNBT( compound );
     }
 
     @Override
     public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
-        compound.setInteger( "progressLeft" , this.progressLeft );
-        compound.setInteger( "progress" , this.progress );
+        compound.setInteger( "timeLeft" , this.timeLeft );
+        compound.setInteger( "totalTimeNeeded" , this.totalTimeNeeded );
         return super.writeToNBT( compound );
     }
 
@@ -47,10 +47,10 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     public void update() {
         if( !super.world.isRemote ) {
             if( this.areInputsPresent() ) {
-                if( this.progressLeft > 0 ) {
-                    this.progressLeft--;
+                if( this.timeLeft > 0 ) {
+                    this.timeLeft--;
 
-                    if( this.progressLeft == 0 ) {
+                    if( this.timeLeft == 0 ) {
                         this.attemptMachine();
                     }
 
@@ -60,8 +60,8 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
                 }
             }
             else {
-                this.progressLeft = 0;
-                this.progress = 0;
+                this.timeLeft = 0;
+                this.totalTimeNeeded = 0;
                 if( super.block instanceof IHasWorkingState ) {
                     ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
                 }
@@ -70,14 +70,14 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     }
 
     public void startMachine() {
-        if( super.recipes != null ) {
+        if( this.recipes != null ) {
             ItemStack[] inputs = this.getInputs();
 
             int progress = this.recipes.getWorkTime( inputs );
             boolean canWork = progress > -1;
             if( canWork ) {
-                this.progressLeft = progress;
-                this.progress = progress;
+                this.timeLeft = progress;
+                this.totalTimeNeeded = progress;
             }
 
             if( super.block instanceof IHasWorkingState ) {
@@ -89,12 +89,12 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     }
 
     public void attemptMachine() {
-        if( super.recipes != null ) {
-            this.progress = 0;
+        if( this.recipes != null ) {
+            this.totalTimeNeeded = 0;
 
             ItemStack[] inputs = this.getInputs();
 
-            ItemStack[] output = super.recipes.getOutputs( inputs );
+            ItemStack[] output = this.recipes.getOutputs( inputs );
 
             if( output != null ) {
                 boolean insertingPossible = true;
@@ -146,11 +146,11 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     public int getField( int id ) {
         switch( id ) {
             case 0:
-                return this.progressLeft;
+                return this.timeLeft;
             case 1:
-                return this.progress;
+                return this.totalTimeNeeded;
             default:
-                return 0;
+                return -1;
         }
     }
 
@@ -158,10 +158,10 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     public void setField( int id , int value ) {
         switch( id ) {
             case 0:
-                this.progressLeft = value;
+                this.timeLeft = value;
                 break;
             case 1:
-                this.progress = value;
+                this.totalTimeNeeded = value;
                 break;
         }
     }

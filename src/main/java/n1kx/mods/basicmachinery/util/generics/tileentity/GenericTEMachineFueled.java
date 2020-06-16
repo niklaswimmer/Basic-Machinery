@@ -17,7 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public abstract class GenericTEMachineFueled extends GenericTEMachine {
 
     protected int burnTimeLeft;
-    protected int burnTime;
+    protected int totalBurnTime;
 
     public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes );
@@ -30,14 +30,14 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
     @Override
     public void readFromNBT( NBTTagCompound compound ) {
         if( compound.hasKey( "burnTimeLeft" ) ) this.burnTimeLeft = compound.getInteger( "burnTimeLeft" );
-        if( compound.hasKey( "burnTime" ) ) this.burnTime = compound.getInteger( "burnTime" );
+        if( compound.hasKey( "totalBurnTime" ) ) this.totalBurnTime = compound.getInteger( "totalBurnTime" );
         super.readFromNBT( compound );
     }
 
     @Override
     public NBTTagCompound writeToNBT( NBTTagCompound compound ) {
         compound.setInteger( "burnTimeLeft" , this.burnTimeLeft );
-        compound.setInteger( "burnTime" , this.burnTime );
+        compound.setInteger( "totalBurnTime" , this.totalBurnTime );
         return super.writeToNBT( compound );
     }
 
@@ -50,12 +50,12 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
                 if( this.burnTimeLeft > 0 ) {
                     this.burnTimeLeft--;
 
-                    if( this.burnTimeLeft == 0 && super.progressLeft - 1 > 0 ) {
+                    if( this.burnTimeLeft == 0 && super.timeLeft - 1 > 0 ) {
                         this.burnTimeLeft = this.getNextBurnTime();
 
-                        if( this.burnTimeLeft == 0 && super.progressLeft > 1 ) {
-                            super.progressLeft = 0;
-                            super.progress = 0;
+                        if( this.burnTimeLeft == 0 && super.timeLeft > 1 ) {
+                            super.timeLeft = 0;
+                            super.totalTimeNeeded = 0;
                             if( super.block instanceof IHasBurningState ) {
                                 ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
                             }
@@ -64,9 +64,9 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
                     flag = true;
                 }
 
-                if( super.progressLeft > 0 ) {
-                    super.progressLeft--;
-                    if( super.progressLeft == 0 ) {
+                if( super.timeLeft > 0 ) {
+                    super.timeLeft--;
+                    if( super.timeLeft == 0 ) {
                         this.attemptMachine();
                     }
                     flag = true;
@@ -77,11 +77,11 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
                 if( flag ) super.markDirty();
             }
             else {
-                super.progressLeft = 0;
-                super.progress = 0;
+                super.timeLeft = 0;
+                super.totalTimeNeeded = 0;
                 this.burnTimeLeft--;
                 if( this.burnTimeLeft == 0 ) {
-                    this.burnTime = 0;
+                    this.totalBurnTime = 0;
                 }
                 if( super.block instanceof IHasWorkingState ) {
                     ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
@@ -100,16 +100,16 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
             boolean canWork = progress > -1;
             if( canWork ) {
                 if( this.burnTimeLeft > 0 ) {
-                    super.progressLeft = progress;
-                    super.progress = progress;
+                    super.timeLeft = progress;
+                    super.totalTimeNeeded = progress;
                     flag = true;
                 }
                 else {
                     int nextBurnTime = this.getNextBurnTime();
                     canWork = nextBurnTime > 0;
                     if( canWork ) {
-                        super.progressLeft = progress;
-                        super.progress = progress;
+                        super.timeLeft = progress;
+                        super.totalTimeNeeded = progress;
                         this.burnTimeLeft = nextBurnTime;
                         if( super.block instanceof IHasBurningState ) {
                             ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
@@ -148,7 +148,7 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
 
         if( indexOfFuel != -1 ) {
             super.fuelHandler.extractItem( indexOfFuel , 1 , false );
-            this.burnTime = Methods.getFuelValue( fuels[indexOfFuel] );
+            this.totalBurnTime = Methods.getFuelValue( fuels[indexOfFuel] );
             return Methods.getFuelValue( fuels[indexOfFuel] );
         }
         else return 0;
@@ -156,40 +156,38 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
 
     @Override
     public int getField( int id ) {
-        switch( id ) {
-            case 0:
-                return super.progressLeft;
-            case 1:
-                return super.progress;
-            case 2:
-                return this.burnTimeLeft;
-            case 3:
-                return this.burnTime;
-            default:
-                return 0;
+        int value = super.getField( id );
+        if( value == -1 ) {
+            switch( id ) {
+                case 2:
+                    value = this.burnTimeLeft;
+                    break;
+                case 3:
+                    value = this.totalBurnTime;
+                    break;
+                default:
+                    value = -1;
+            }
         }
+        return value;
     }
 
     @Override
     public void setField( int id , int value ) {
         switch( id ) {
-            case 0:
-                super.progressLeft = value;
-                break;
-            case 1:
-                super.progress = value;
-                break;
             case 2:
                 this.burnTimeLeft = value;
                 break;
             case 3:
-                this.burnTime = value;
+                this.totalBurnTime = value;
                 break;
+            default:
+                super.setField( id , value );
         }
     }
 
     @Override
     public int getFieldCount() {
-        return 4;
+        return super.getFieldCount() + 2;
     }
 }
