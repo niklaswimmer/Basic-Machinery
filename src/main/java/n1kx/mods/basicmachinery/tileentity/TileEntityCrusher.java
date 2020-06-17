@@ -4,12 +4,13 @@ import n1kx.mods.basicmachinery.list.BlockList;
 import n1kx.mods.basicmachinery.recipes.RecipesCrusher;
 import n1kx.mods.basicmachinery.util.IHasGui;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
+import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEMachine;
 import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEMachineFueled;
 
 public class TileEntityCrusher extends GenericTEMachineFueled implements IHasGui {
 
     public TileEntityCrusher() {
-        super( 1 , 1 , 1 , (GenericBlock)BlockList.CRUSHER , new RecipesCrusher() );
+        super( 1 , 1 , 1 , (GenericBlock)BlockList.CRUSHER , new RecipesCrusher() , null );
     }
 
     public int getGuiID() {

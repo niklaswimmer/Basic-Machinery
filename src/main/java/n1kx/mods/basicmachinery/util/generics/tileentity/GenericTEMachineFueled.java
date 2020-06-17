@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
+import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.IHasBurningState;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
@@ -20,7 +21,7 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
     protected int totalBurnTime;
 
     public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
-        super( inputSlots , outputSlots , fuelSlots , block , recipes );
+        this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
     }
 
     public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
@@ -44,117 +45,64 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
     @Override
     public void update() {
         if( !super.world.isRemote ) {
-            if( super.areInputsPresent() ) {
-                boolean flag = false;
+            if( this.burnTimeLeft > 0 ) {
+                super.update();
 
-                if( this.burnTimeLeft > 0 ) {
-                    this.burnTimeLeft--;
-
-                    if( this.burnTimeLeft == 0 && super.timeLeft - 1 > 0 ) {
-                        this.burnTimeLeft = this.getNextBurnTime();
-
-                        if( this.burnTimeLeft == 0 && super.timeLeft > 1 ) {
-                            super.timeLeft = 0;
-                            super.totalTimeNeeded = 0;
-                            if( super.block instanceof IHasBurningState ) {
-                                ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
-                            }
-                        }
-                    }
-                    flag = true;
+                if( --this.burnTimeLeft == 0 ) if( ( this.burnTimeLeft = this.getNextBurnTime() ) == 0 ) {
+                    super.timeLeft = 0;
+                    super.totalTimeNeeded = 0;
+                    if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
+                    if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
+                }
+                else {
+                    this.totalBurnTime = this.burnTimeLeft;
+                    super.fuelHandler.extractItem( -1 , 1 , false );
                 }
 
-                if( super.timeLeft > 0 ) {
-                    super.timeLeft--;
-                    if( super.timeLeft == 0 ) {
-                        this.attemptMachine();
-                    }
-                    flag = true;
-                } else {
-                    this.startMachine();
-                }
-
-                if( flag ) super.markDirty();
+                super.markDirty();
             }
-            else {
-                super.timeLeft = 0;
-                super.totalTimeNeeded = 0;
-                this.burnTimeLeft--;
-                if( this.burnTimeLeft == 0 ) {
-                    this.totalBurnTime = 0;
-                    if( super.block instanceof  IHasBurningState ) {
-                        ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
-                    }
+            else if( super.fuelBools.getValue( super.hasRecentlyChanged ) ) {
+                this.burnTimeLeft = this.getNextBurnTime();
+                if( this.burnTimeLeft > 0 ) {
+                    this.totalBurnTime = this.burnTimeLeft;
+                    super.fuelHandler.extractItem( -1 , 1 , false );
+                    if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
                 }
-                if( super.block instanceof IHasWorkingState ) {
-                    ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
-                }
+                super.markDirty();
+                super.fuelBools.setValue( super.hasRecentlyChanged , false );
             }
         }
     }
 
     @Override
     public void startMachine() {
-        if( super.recipes != null ) {
-            boolean flag = false;
-
-            ItemStack[] inputs = this.getInputs();
-            int progress = this.recipes.getWorkTime( inputs );
-            boolean canWork = progress > -1;
-            if( canWork ) {
-                if( this.burnTimeLeft > 0 ) {
-                    super.timeLeft = progress;
-                    super.totalTimeNeeded = progress;
-                    flag = true;
-                }
-                else {
-                    int nextBurnTime = this.getNextBurnTime();
-                    canWork = nextBurnTime > 0;
-                    if( canWork ) {
-                        super.timeLeft = progress;
-                        super.totalTimeNeeded = progress;
-                        this.burnTimeLeft = nextBurnTime;
-                        if( super.block instanceof IHasBurningState ) {
-                            ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
-                        }
-                        flag = true;
-                    }
-                }
-            }
-
-            if( super.block instanceof IHasWorkingState ) {
-                ( (IHasWorkingState)super.block ).setWorkingState( canWork , super.world , super.pos );
-            }
-
-            if( flag ) super.markDirty();
+        boolean canWork = false;
+        int nextBurnTime = 0;
+        if( this.burnTimeLeft > 0 ) canWork = true;
+        else if( ( nextBurnTime = this.getNextBurnTime() ) > 0 ) canWork = true;
+        if( canWork ) super.startMachine();
+        if( super.timeLeft > 0 ) {
+            this.burnTimeLeft = nextBurnTime;
+            this.totalBurnTime = nextBurnTime;
+            super.fuelHandler.extractItem( -1 , 1 , false );
+            if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
         }
-    }
-
-    public ItemStack[] getFuels() {
-        ItemStack[] fuels = new ItemStack[super.fuelSlots];
-        for( int i = 0 ; i < fuels.length ; i++ ) {
-            fuels[i] = super.fuelHandler.getStackInSlot( i );
-        }
-        return fuels;
     }
 
     public int getNextBurnTime() {
-        ItemStack[] fuels = this.getFuels();
-        int indexOfFuel = -1;
+        if( super.fuelBools.getValue( super.isNotEmpty ) ) {
+            ItemStack[] fuels = super.getFuels();
+            int indexOfFuel = -1;
 
-        for( int i = 0 ; i < fuels.length ; i++ ) {
-            if( Methods.isFuel( fuels[i] ) ) {
+            for( int i = 0 ; i < fuels.length ; i++ ) if( Methods.isFuel( fuels[i] ) ) {
                 indexOfFuel = i;
                 break;
             }
-        }
 
-        if( indexOfFuel != -1 ) {
-            super.fuelHandler.extractItem( indexOfFuel , 1 , false );
-            this.totalBurnTime = Methods.getFuelValue( fuels[indexOfFuel] );
-            return Methods.getFuelValue( fuels[indexOfFuel] );
+            if( indexOfFuel != -1 ) return Methods.getFuelValue( fuels[indexOfFuel] );
+            else return 0;
         }
-        else return 0;
+        return 0;
     }
 
     @Override
@@ -192,5 +140,28 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
     @Override
     public int getFieldCount() {
         return super.getFieldCount() + 2;
+    }
+
+    @Override
+    public void onLoad() {
+        if( !world.isRemote ) {
+            super.onLoad();
+            if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( this.timeLeft > 0 , super.world , super.pos );
+        }
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound compound = super.getUpdateTag();
+        compound.setInteger( "burnTimeLeft" , this.burnTimeLeft );
+        return compound;
+    }
+
+    @Override
+    public void handleUpdateTag( NBTTagCompound compound ) {
+        super.handleUpdateTag( compound );
+        int burnTimeLeft = 0;
+        if( compound.hasKey( "burnTimeLeft" ) ) burnTimeLeft = compound.getInteger( "burnTimeLeft" );
+        if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( burnTimeLeft > 0 , super.world , super.pos );
     }
 }

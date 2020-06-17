@@ -1,10 +1,10 @@
 package n1kx.mods.basicmachinery.block;
 
+import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.tileentity.TileEntityCrusher;
 import n1kx.mods.basicmachinery.util.IHasBurningState;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -27,7 +27,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BlockCrusher extends GenericBlock implements ITileEntityProvider, IHasWorkingState , IHasBurningState {
 
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+    public static final PropertyDirection FACING = PropertyDirection.create( "facing" , EnumFacing.Plane.HORIZONTAL );
     public static final PropertyBool WORKING = PropertyBool.create( "working" );
     public static final PropertyBool BURNING = PropertyBool.create( "burning" );
 
@@ -43,6 +43,7 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider, I
                 .withProperty( BlockCrusher.WORKING , false )
                 .withProperty( BlockCrusher.BURNING , false )
         );
+
     }
 
     @Override
@@ -57,7 +58,7 @@ public class BlockCrusher extends GenericBlock implements ITileEntityProvider, I
 
     @Override
     public int getMetaFromState( IBlockState state ) {
-        return state.getValue( BlockCrusher.FACING ).getIndex();
+        return state.getValue( BlockCrusher.FACING ).getHorizontalIndex();
     }
 
     @Override

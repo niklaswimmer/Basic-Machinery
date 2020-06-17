@@ -43,7 +43,6 @@ public abstract class GenericContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot( EntityPlayer playerIn , int index ) {
-        //TEST what happens when this method does not get overridden
         ItemStack stack = ItemStack.EMPTY;
         Slot slot = super.inventorySlots.get( index );
 
@@ -62,11 +61,11 @@ public abstract class GenericContainer extends Container {
             //if the slot is a normal player inventory slot
             else if( index >= this.tileEntity.inventorySize ) {
                 //if the items in the slot are inputs && there are input slots --> items will get moved to an input slot (if possible)
-                if( this.tileEntity.recipes.getInstance().isInput( stack1 ) && this.tileEntity.hasInputSlots() ) {
+                if( this.tileEntity.recipes.getInstance().isInput( stack1 ) && this.tileEntity.inputSlots > 0 ) {
                     if( !this.mergeItemStack( stack1 , 0 , this.tileEntity.inputSlots , false ) ) return ItemStack.EMPTY;
                 }
                 //if the items in the slot are fuel && there are fuel slots --> items will get moved to a fuel slot (if possible)
-                else if( Methods.isFuel( stack1 ) && this.tileEntity.hasFuelSlots() ) {
+                else if( Methods.isFuel( stack1 ) && this.tileEntity.fuelSlots > 0 ) {
                     if( !this.mergeItemStack( stack1 , this.tileEntity.inputSlots + this.tileEntity.fuelSlots - 1 , this.tileEntity.inventorySize - this.tileEntity.outputSlots , false ) ) return ItemStack.EMPTY;
                 }
                 //if the slot is not in the hotbar --> items will get moved to hotbar (if possible)
@@ -78,9 +77,7 @@ public abstract class GenericContainer extends Container {
                     if( !this.mergeItemStack( stack1 , this.tileEntity.inventorySize , this.tileEntity.inventorySize + 27 , false ) ) return ItemStack.EMPTY;
                 }
             }
-            //TEST what happens when this if statement doesn't exist
             if( stack1.isEmpty() ) slot.putStack(ItemStack.EMPTY);
-            //TEST what happens without the lines below
             else slot.onSlotChanged();
 
             if( stack1.getCount() == stack.getCount() ) return ItemStack.EMPTY;

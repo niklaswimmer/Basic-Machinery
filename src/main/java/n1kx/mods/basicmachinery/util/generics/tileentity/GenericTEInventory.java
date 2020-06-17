@@ -1,5 +1,6 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
+import n1kx.mods.basicmachinery.util.BooleanHolder;
 import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
@@ -8,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
@@ -25,31 +28,24 @@ import java.util.Objects;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class GenericTEInventory extends TileEntity implements IInventory , IDropItemsOnBreak {
+    protected final String isEmpty = "isEmpty";
+    protected final String isFull = "isFull";
+    protected final String hasRecentlyChanged = "hasRecentlyChanged";
+    protected final String isNotEmpty = "isNotEmpty";
+
+    public final int inputSlots , outputSlots , fuelSlots;
+    public final int inventorySize;
 
     protected final ItemStackHandler inputHandler, fuelHandler, outputHandler;
     protected final CombinedInvWrapper combinedHandler;
 
-    public final int inputSlots;
-    public final int outputSlots;
-    public final int fuelSlots;
-    public final int inventorySize;
+    protected final BooleanHolder inputBools , fuelBools , outputBools;
 
     public final GenericBlock block;
 
     protected final String customName;
 
     public final IRecipes recipes;
-
-    /**
-     * constructor
-     * @param inputSlots the number of input slots (does not include fuel slots)
-     * @param outputSlots the number of output slots
-     * @param fuelSlots the number of fuel slots
-     * @param block the block this tile entity belongs to
-     */
-    protected GenericTEInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
-        this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
-    }
 
     /**
      * constructor
@@ -65,6 +61,10 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         this.fuelSlots = fuelSlots;
         this.inventorySize = this.inputSlots + this.outputSlots + this.fuelSlots;
 
+        this.inputBools = new BooleanHolder( new String[]{ this.isEmpty , this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false , false } );
+        this.fuelBools = new BooleanHolder( new String[]{ this.isEmpty , this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false , false } );
+        this.outputBools = new BooleanHolder( new String[]{ this.isEmpty , this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false , false } );
+
         this.block = block;
 
         this.customName = Methods.newUnlocalizedName( customName );
@@ -75,18 +75,50 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
             @Override
             protected void onContentsChanged( int slot ) {
                 GenericTEInventory.super.markDirty();
+                GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.inputBools , slot );
+            }
+            @Override
+            protected void onLoad() {
+                GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.inputBools , 0 );
             }
         };
         this.fuelHandler = new ItemStackHandler( this.fuelSlots ) {
             @Override
             protected void onContentsChanged( int slot ) {
                 GenericTEInventory.super.markDirty();
+                GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.fuelBools , slot );
+            }
+            @Override
+            protected void onLoad() {
+                GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.fuelBools , 0 );
+            }
+            public ItemStack extractItem( int amount ) {
+                int slotIndex = -1;
+
+                return this.extractItem( slotIndex , amount , false );
+            }
+            @Nonnull
+            @Override
+            public ItemStack extractItem( int slot , int amount , boolean simulate ) {
+                if( slot == -1 ) {
+                    for( int i = 0 ; i < this.getSlots() ; i++ ) if( !ItemStack.areItemStacksEqual( this.getStackInSlot( i ) , ItemStack.EMPTY ) ) {
+                        slot = i;
+                        break;
+                    }
+                }
+                if( slot == -1 ) return super.extractItem( 0 , 0 , true );
+                return super.extractItem( slot , amount , simulate );
             }
         };
         this.outputHandler = new ItemStackHandler( this.outputSlots ) {
             @Override
             protected void onContentsChanged( int slot ) {
                 GenericTEInventory.super.markDirty();
+                GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.outputBools , slot );
+            }
+            @Override
+            protected void onLoad() {
+                GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.outputBools , 0 );
             }
         };
 
@@ -105,31 +137,17 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         return super.writeToNBT( compound );
     }
 
-    public NBTTagCompound writeInventory( NBTTagCompound nbt ) {
-        nbt.setTag( "itemsIn" , inputHandler.serializeNBT() );
-        nbt.setTag( "itemsFuel" , fuelHandler.serializeNBT() );
-        nbt.setTag( "itemsOut" , outputHandler.serializeNBT() );
-        return nbt;
+    public void readInventory( NBTTagCompound compound ) {
+        if( compound.hasKey( "inputs" ) ) this.inputHandler.deserializeNBT( (NBTTagCompound)compound.getTag( "inputs" ) );
+        if( compound.hasKey( "fuels" ) ) this.fuelHandler.deserializeNBT( (NBTTagCompound)compound.getTag( "fuels" ) );
+        if( compound.hasKey( "outputs" ) ) this.outputHandler.deserializeNBT( (NBTTagCompound)compound.getTag( "outputs" ) );
     }
 
-    public void readInventory(NBTTagCompound nbt) {
-        if( nbt.hasKey( "itemsIn" ) ) {
-            inputHandler.deserializeNBT( (NBTTagCompound)nbt.getTag( "itemsIn" ) );
-        }
-        if( nbt.hasKey( "itemsFuel" ) ) {
-            fuelHandler.deserializeNBT( (NBTTagCompound)nbt.getTag( "itemsFuel" ) );
-        }
-        if( nbt.hasKey( "itemsOut" ) ) {
-            outputHandler.deserializeNBT( (NBTTagCompound)nbt.getTag( "itemsOut" ) );
-        }
-    }
-
-    public boolean hasFuelSlots() {
-        return this.fuelSlots > 0;
-    }
-
-    public boolean hasInputSlots() {
-        return this.inputSlots > 0;
+    public NBTTagCompound writeInventory( NBTTagCompound compound ) {
+        compound.setTag( "inputs" , this.inputHandler.serializeNBT() );
+        compound.setTag( "fuels" , this.fuelHandler.serializeNBT() );
+        compound.setTag( "outputs" , this.outputHandler.serializeNBT() );
+        return compound;
     }
 
     @Override
@@ -139,22 +157,7 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
 
     @Override
     public boolean isEmpty() {
-        for( int i = 0 ; i < this.inputHandler.getSlots() ; i++ ) {
-            if( !this.inputHandler.getStackInSlot( i ).isEmpty() ) {
-                return false;
-            }
-        }
-        for( int i = 0 ; i < this.fuelHandler.getSlots() ; i++ ) {
-            if( !this.fuelHandler.getStackInSlot( i ).isEmpty() ) {
-                return false;
-            }
-        }
-        for( int i = 0 ; i < this.outputHandler.getSlots() ; i++ ) {
-            if( !this.outputHandler.getStackInSlot( i ).isEmpty() ) {
-                return false;
-            }
-        }
-        return true;
+        return inputBools.getValue( this.isEmpty ) && fuelBools.getValue( this.isEmpty ) && outputBools.getValue( this.isEmpty );
     }
 
     @Override
@@ -277,7 +280,55 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
     }
 
     @Override
-    public boolean shouldRefresh( World world , BlockPos pos , IBlockState oldState , IBlockState newState ) {
+    public boolean shouldRefresh( World worldIn , BlockPos pos , IBlockState oldState , IBlockState newState ) {
         return oldState.getBlock() != newState.getBlock();
+    }
+
+    public ItemStack[] getInputs() {
+        ItemStack[] inputs = new ItemStack[this.inputSlots];
+        for( int i = 0 ; i < inputs.length ; i++ ) {
+            inputs[i] = this.inputHandler.getStackInSlot( i );
+        }
+        return inputs;
+    }
+
+    public ItemStack[] getFuels() {
+        ItemStack[] fuels = new ItemStack[this.fuelSlots];
+        for( int i = 0 ; i < fuels.length ; i++ ) {
+            fuels[i] = this.fuelHandler.getStackInSlot( i );
+        }
+        return fuels;
+    }
+
+    public ItemStack[] getOutputs() {
+        ItemStack[] outputs = new ItemStack[this.outputSlots];
+        for( int i = 0 ; i < outputs.length ; i++ ) {
+            outputs[i] = this.outputHandler.getStackInSlot( i );
+        }
+        return outputs;
+    }
+
+    private void contentsChanged( ItemStackHandler handler , BooleanHolder bool , int slot ) {
+        bool.setValue( this.isEmpty , true );
+        bool.setValue( this.isNotEmpty , false );
+        for( int i = 0 ; i < handler.getSlots() ; i++ ) {
+            if( !ItemStack.areItemStacksEqual( handler.getStackInSlot( i ) , ItemStack.EMPTY ) ) {
+                bool.setValue( this.isEmpty , false );
+                bool.setValue( this.isNotEmpty , true );
+                break;
+            }
+        }
+        if( bool.getValue( this.isNotEmpty ) ) {
+            bool.setValue( this.isFull , true );
+            for( int i = 0 ; i < handler.getSlots() ; i++ ) {
+                if( handler.getStackInSlot( i ).getCount() != this.getInventoryStackLimit() ) {
+                    bool.setValue( this.isFull , false );
+                }
+            }
+        }
+        else {
+            bool.setValue( this.isFull , false );
+        }
+        bool.setValue( this.hasRecentlyChanged , true );
     }
 }
