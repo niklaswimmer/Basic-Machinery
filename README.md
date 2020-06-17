@@ -2,15 +2,15 @@
 A minecraft mod that adds basic machinery like a crusher. 
 
 ## Machinery
--[x] Crusher
+- [x] Crusher
 
 
 ## Planed Features
--[x] All machinery works with Furnace fuel (at least Vanilla, haven't tested it with modded fuel yet) and not with power like rf.
--[ ] Each machine can be disabled through a config file.
--[ ] If the machine is disabled all items which belong to the machine (for example the crushed materials for the crusher) automatically also get disabled (they can be enabled back through config file).
--[ ] JEI Integration
--[ ] Compatibility with other mods (especially material adding mods like TF or IE) 
+- [x] All machinery works with Furnace fuel (at least Vanilla, haven't tested it with modded fuel yet) and not with power like rf.<br>
+- [ ] Each machine can be disabled through a config file.<br>
+- [ ] If the machine is disabled all items which belong to the machine (for example the crushed materials for the crusher) automatically also get disabled (they can be enabled back through config file).<br>
+- [ ] JEI Integration<br>
+- [ ] Compatibility with other mods (especially material adding mods like TF or IE).<br>
 
 
 ## Links
