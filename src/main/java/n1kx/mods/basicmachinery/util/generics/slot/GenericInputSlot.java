@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics.slot;
 
 import n1kx.mods.basicmachinery.util.IRecipes;
+import n1kx.mods.basicmachinery.util.RecipePart;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
@@ -18,6 +19,6 @@ public class GenericInputSlot extends GenericSlot {
 
     @Override
     public boolean isItemValid( ItemStack stack ) {
-        return recipes.getInstance().isInput( stack );
+        return recipes.areInRecipe( RecipePart.INPUT , stack );
     }
 }

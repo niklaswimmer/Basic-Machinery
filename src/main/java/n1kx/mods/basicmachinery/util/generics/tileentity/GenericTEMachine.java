@@ -3,6 +3,7 @@ package n1kx.mods.basicmachinery.util.generics.tileentity;
 import mcp.MethodsReturnNonnullByDefault;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
+import n1kx.mods.basicmachinery.util.RecipePart;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,7 +52,7 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     protected void startMachine() {
         if( super.recipes != null && super.inputBools.getValue( super.isNotEmpty ) && !super.outputBools.getValue( super.isFull ) ) {
             ItemStack[] inputs = super.getInputs();
-            int progress = this.recipes.getWorkTime( inputs );
+            int progress = this.recipes.getTimeNeeded( RecipePart.INPUT , inputs );
 
             if( progress > -1 ) {
                 this.timeLeft = progress;

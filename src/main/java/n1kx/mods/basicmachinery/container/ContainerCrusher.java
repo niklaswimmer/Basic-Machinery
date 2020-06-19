@@ -2,20 +2,19 @@ package n1kx.mods.basicmachinery.container;
 
 import n1kx.mods.basicmachinery.tileentity.TileEntityCrusher;
 import n1kx.mods.basicmachinery.util.generics.GenericContainer;
-import n1kx.mods.basicmachinery.util.generics.IHasFields;
 import n1kx.mods.basicmachinery.util.generics.slot.GenericFuelSlot;
 import n1kx.mods.basicmachinery.util.generics.slot.GenericInputSlot;
 import n1kx.mods.basicmachinery.util.generics.slot.GenericOutputSlot;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;
 
-public class ContainerCrusher extends GenericContainer implements IHasFields {
+public class ContainerCrusher extends GenericContainer {
 
     private final TileEntityCrusher tileEntity;
-    private int progressLeft;
-    private int progress;
+    private int timeLeft;
+    private int totalTimeNeeded;
     private int burnTimeLeft;
-    private int burnTime;
+    private int totalBurnTime;
 
     public ContainerCrusher( InventoryPlayer playerInventory , TileEntityCrusher tileEntity ) {
         super( playerInventory , tileEntity );
@@ -37,15 +36,15 @@ public class ContainerCrusher extends GenericContainer implements IHasFields {
         {
             IContainerListener listener = this.listeners.get(i);
 
-            if( this.progressLeft != this.tileEntity.getField( 0 ) ) listener.sendWindowProperty( this , 0 , this.tileEntity.getField( 0 ) );
-            if( this.progress != this.tileEntity.getField( 1 ) ) listener.sendWindowProperty( this , 1 , this.tileEntity.getField( 1 ) );
+            if( this.timeLeft != this.tileEntity.getField( 0 ) ) listener.sendWindowProperty( this , 0 , this.tileEntity.getField( 0 ) );
+            if( this.totalTimeNeeded != this.tileEntity.getField( 1 ) ) listener.sendWindowProperty( this , 1 , this.tileEntity.getField( 1 ) );
             if( this.burnTimeLeft != this.tileEntity.getField( 2 ) ) listener.sendWindowProperty( this , 2 , this.tileEntity.getField( 2 ) );
-            if( this.burnTime != this.tileEntity.getField( 3 ) ) listener.sendWindowProperty( this , 3 , this.tileEntity.getField( 3 ) );
+            if( this.totalBurnTime != this.tileEntity.getField( 3 ) ) listener.sendWindowProperty( this , 3 , this.tileEntity.getField( 3 ) );
         }
 
-        this.progressLeft = this.tileEntity.getField( 0 );
-        this.progress = this.tileEntity.getField( 1 );
+        this.timeLeft = this.tileEntity.getField( 0 );
+        this.totalTimeNeeded = this.tileEntity.getField( 1 );
         this.burnTimeLeft = this.tileEntity.getField( 2 );
-        this.burnTime = this.tileEntity.getField( 3 );
+        this.totalBurnTime = this.tileEntity.getField( 3 );
     }
 }

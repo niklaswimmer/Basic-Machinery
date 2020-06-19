@@ -1,18 +1,15 @@
 package n1kx.mods.basicmachinery.util;
 
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
+import net.minecraft.item.crafting.IRecipe;
 
 public interface IRecipes {
 
-    IRecipes getInstance();
+    void addRecipe( ItemStack[] inputs , ItemStack[] outputs , int processTime );
 
-    boolean isInput( ItemStack stack );
+    boolean areInRecipe( RecipePart part , ItemStack... inputs );
 
+    int getTimeNeeded( RecipePart part , ItemStack... stacks );
     ItemStack[] getOutputs( ItemStack... inputs );
-
-    int getWorkTime( ItemStack... inputs );
 
 }

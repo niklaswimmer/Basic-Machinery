@@ -132,7 +132,7 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
     public void onLoad() {
         if( !world.isRemote ) {
             super.onLoad();
-            if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( this.timeLeft > 0 , super.world , super.pos );
+            if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( this.burnTimeLeft > 0 , super.world , super.pos );
         }
     }
 

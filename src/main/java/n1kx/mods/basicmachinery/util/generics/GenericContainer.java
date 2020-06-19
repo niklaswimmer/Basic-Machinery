@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics;
 
 import n1kx.mods.basicmachinery.util.Methods;
+import n1kx.mods.basicmachinery.util.RecipePart;
 import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -61,7 +62,7 @@ public abstract class GenericContainer extends Container {
             //if the slot is a normal player inventory slot
             else if( index >= this.tileEntity.inventorySize ) {
                 //if the items in the slot are inputs && there are input slots --> items will get moved to an input slot (if possible)
-                if( this.tileEntity.recipes.getInstance().isInput( stack1 ) && this.tileEntity.inputSlots > 0 ) {
+                if( this.tileEntity.recipes != null ) if( this.tileEntity.recipes.areInRecipe( RecipePart.INPUT , stack1 ) && this.tileEntity.inputSlots > 0 ) {
                     if( !this.mergeItemStack( stack1 , 0 , this.tileEntity.inputSlots , false ) ) return ItemStack.EMPTY;
                 }
                 //if the items in the slot are fuel && there are fuel slots --> items will get moved to a fuel slot (if possible)
