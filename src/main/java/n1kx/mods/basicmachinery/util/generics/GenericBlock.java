@@ -1,6 +1,7 @@
 package n1kx.mods.basicmachinery.util.generics;
 
 import n1kx.mods.basicmachinery.BasicMachinery;
+import n1kx.mods.basicmachinery.block.BlockCrusher;
 import n1kx.mods.basicmachinery.list.BlockList;
 import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
 import n1kx.mods.basicmachinery.util.IHasGui;
@@ -8,6 +9,8 @@ import n1kx.mods.basicmachinery.util.IHasModel;
 import n1kx.mods.basicmachinery.util.Methods;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,4 +73,9 @@ public class GenericBlock extends Block implements IHasModel {
 
         super.breakBlock( worldIn , pos , blockState );
     }
+
+    public void setBoolState( boolean value , World worldIn , BlockPos pos , PropertyBool property ) {
+        worldIn.setBlockState( pos , worldIn.getBlockState( pos ).withProperty( property , value ) , 2 );
+    }
+
 }
