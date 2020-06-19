@@ -1,5 +1,6 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
+import mcp.MethodsReturnNonnullByDefault;
 import n1kx.mods.basicmachinery.util.BooleanHolder;
 import n1kx.mods.basicmachinery.util.IDropItemsOnBreak;
 import n1kx.mods.basicmachinery.util.IRecipes;
@@ -9,13 +10,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -92,11 +92,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
             protected void onLoad() {
                 GenericTEInventory.this.contentsChanged( this , GenericTEInventory.this.fuelBools , 0 );
             }
-            public ItemStack extractItem( int amount ) {
-                int slotIndex = -1;
-
-                return this.extractItem( slotIndex , amount , false );
-            }
             @Nonnull
             @Override
             public ItemStack extractItem( int slot , int amount , boolean simulate ) {
@@ -106,7 +101,7 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
                         break;
                     }
                 }
-                if( slot == -1 ) return super.extractItem( 0 , 0 , true );
+                if( slot == -1 ) return ItemStack.EMPTY;
                 return super.extractItem( slot , amount , simulate );
             }
         };
@@ -284,28 +279,17 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         return oldState.getBlock() != newState.getBlock();
     }
 
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentString( this.getName() );
+    }
+
     public ItemStack[] getInputs() {
         ItemStack[] inputs = new ItemStack[this.inputSlots];
         for( int i = 0 ; i < inputs.length ; i++ ) {
             inputs[i] = this.inputHandler.getStackInSlot( i );
         }
         return inputs;
-    }
-
-    public ItemStack[] getFuels() {
-        ItemStack[] fuels = new ItemStack[this.fuelSlots];
-        for( int i = 0 ; i < fuels.length ; i++ ) {
-            fuels[i] = this.fuelHandler.getStackInSlot( i );
-        }
-        return fuels;
-    }
-
-    public ItemStack[] getOutputs() {
-        ItemStack[] outputs = new ItemStack[this.outputSlots];
-        for( int i = 0 ; i < outputs.length ; i++ ) {
-            outputs[i] = this.outputHandler.getStackInSlot( i );
-        }
-        return outputs;
     }
 
     private void contentsChanged( ItemStackHandler handler , BooleanHolder bool , int slot ) {

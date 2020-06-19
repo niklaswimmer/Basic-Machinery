@@ -1,13 +1,11 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
-import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.IHasBurningState;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
@@ -48,61 +46,49 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
             if( this.burnTimeLeft > 0 ) {
                 super.update();
 
-                if( --this.burnTimeLeft == 0 ) if( ( this.burnTimeLeft = this.getNextBurnTime() ) == 0 ) {
-                    super.timeLeft = 0;
-                    super.totalTimeNeeded = 0;
-                    if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
-                    if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
-                }
-                else {
-                    this.totalBurnTime = this.burnTimeLeft;
-                    super.fuelHandler.extractItem( -1 , 1 , false );
+                if( --this.burnTimeLeft == 0 ) {
+                    if( super.inputBools.getValue( super.isNotEmpty )) {
+                        if( ( this.burnTimeLeft = this.getNextBurnTime() ) == 0 ) {
+                            this.totalBurnTime = 0;
+                            super.timeLeft = 0;
+                            super.totalTimeNeeded = 0;
+                            if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
+                            if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
+                        }
+                        else {
+                            this.totalBurnTime = this.burnTimeLeft;
+                            super.fuelHandler.extractItem( -1 , 1 , false );
+                        }
+                    }
+                    else{
+                        this.totalBurnTime = 0;
+                        if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( false , super.world , super.pos );
+                    }
                 }
 
                 super.markDirty();
             }
             else if( super.fuelBools.getValue( super.hasRecentlyChanged ) ) {
-                this.burnTimeLeft = this.getNextBurnTime();
-                if( this.burnTimeLeft > 0 ) {
-                    this.totalBurnTime = this.burnTimeLeft;
-                    super.fuelHandler.extractItem( -1 , 1 , false );
-                    if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
-                }
-                super.markDirty();
-                super.fuelBools.setValue( super.hasRecentlyChanged , false );
-            }
-        }
-    }
+                if( super.fuelBools.getValue( super.isNotEmpty ) ) {
+                    if( super.inputBools.getValue( super.isNotEmpty ) ) {
+                        if( ( this.burnTimeLeft = this.getNextBurnTime() ) > 0 ) {
+                            this.totalBurnTime = this.burnTimeLeft;
+                            super.fuelHandler.extractItem( -1 , 1 , false );
 
-    @Override
-    public void startMachine() {
-        boolean canWork = false;
-        int nextBurnTime = 0;
-        if( this.burnTimeLeft > 0 ) canWork = true;
-        else if( ( nextBurnTime = this.getNextBurnTime() ) > 0 ) canWork = true;
-        if( canWork ) super.startMachine();
-        if( super.timeLeft > 0 ) {
-            this.burnTimeLeft = nextBurnTime;
-            this.totalBurnTime = nextBurnTime;
-            super.fuelHandler.extractItem( -1 , 1 , false );
-            if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
+                            if( super.block instanceof IHasBurningState ) ( (IHasBurningState)super.block ).setBurningState( true , super.world , super.pos );
+
+                            super.markDirty();
+                        }
+                        super.fuelBools.setValue( super.hasRecentlyChanged , false );
+                    }
+                }
+                else super.fuelBools.setValue( super.hasRecentlyChanged , false );
+            }
         }
     }
 
     public int getNextBurnTime() {
-        if( super.fuelBools.getValue( super.isNotEmpty ) ) {
-            ItemStack[] fuels = super.getFuels();
-            int indexOfFuel = -1;
-
-            for( int i = 0 ; i < fuels.length ; i++ ) if( Methods.isFuel( fuels[i] ) ) {
-                indexOfFuel = i;
-                break;
-            }
-
-            if( indexOfFuel != -1 ) return Methods.getFuelValue( fuels[indexOfFuel] );
-            else return 0;
-        }
-        return 0;
+        return Methods.getFuelValue( super.fuelHandler.extractItem( -1 , 1 , true ) );
     }
 
     @Override

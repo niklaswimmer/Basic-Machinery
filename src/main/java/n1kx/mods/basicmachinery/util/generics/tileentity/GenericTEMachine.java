@@ -1,7 +1,6 @@
 package n1kx.mods.basicmachinery.util.generics.tileentity;
 
 import mcp.MethodsReturnNonnullByDefault;
-import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
@@ -50,7 +49,7 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     }
 
     protected void startMachine() {
-        if( super.recipes != null && !super.inputBools.getValue( super.isEmpty ) ) {
+        if( super.recipes != null && super.inputBools.getValue( super.isNotEmpty ) && !super.outputBools.getValue( super.isFull ) ) {
             ItemStack[] inputs = super.getInputs();
             int progress = this.recipes.getWorkTime( inputs );
 
