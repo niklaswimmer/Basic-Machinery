@@ -26,10 +26,11 @@ If it's a newer version, we are probably already working on it. If it's an older
 Sure thing. Just credit us.
 
 *Can I contribute to this project?*<br>
-Feel free to fork our project on [GitHub](https://github.com/N1K-x/Basic-Machinery) and create a pull request with your changes.
+If you want to make changed to our code your are free to fork our project on [GitHub](https://github.com/N1K-x/Basic-Machinery) and create a pull request with your changes. 
+We will then decide if we want to implement them.
  
 *Can you add [new feature]?*<br>
-Feel free to open a [new issue](https://github.com/N1K-x/Basic-Machinery/issues/new?assignees=&labels=enhancement&template=feature-request.md&title=) and tell us your suggestions. However, we can't guarantee you that we will implement your it.<br>
+Feel free to open a [new issue](https://github.com/N1K-x/Basic-Machinery/issues/new?assignees=&labels=enhancement&template=feature-request.md&title=) and tell us your suggestions. However, we can't guarantee you that we will implement them.<br>
 We would also very appreciate if you check other Issues and/or our [Trello Page](https://trello.com/b/tEMtAq4g/basic-machinery) first. Maybe this request already exists, or we are already working on implementing it.
 
 *Will this break my game?*<br>
