@@ -28,10 +28,9 @@ import java.util.Objects;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class GenericTEInventory extends TileEntity implements IInventory , IDropItemsOnBreak {
-    protected final String isEmpty = "isEmpty";
+    protected final String isNotEmpty = "isNotEmpty";
     protected final String isFull = "isFull";
     protected final String hasRecentlyChanged = "hasRecentlyChanged";
-    protected final String isNotEmpty = "isNotEmpty";
 
     public final int inputSlots , outputSlots , fuelSlots;
     public final int inventorySize;
@@ -61,9 +60,9 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         this.fuelSlots = fuelSlots;
         this.inventorySize = this.inputSlots + this.outputSlots + this.fuelSlots;
 
-        this.inputBools = new BooleanHolder( new String[]{ this.isEmpty , this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false , false } );
-        this.fuelBools = new BooleanHolder( new String[]{ this.isEmpty , this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false , false } );
-        this.outputBools = new BooleanHolder( new String[]{ this.isEmpty , this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false , false } );
+        this.inputBools = new BooleanHolder( new String[]{ this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false } );
+        this.fuelBools = new BooleanHolder( new String[]{ this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false } );
+        this.outputBools = new BooleanHolder( new String[]{ this.isNotEmpty , this.isFull , this.hasRecentlyChanged } , new boolean[]{ false , false , false } );
 
         this.block = block;
 
@@ -152,7 +151,7 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
 
     @Override
     public boolean isEmpty() {
-        return inputBools.getValue( this.isEmpty ) && fuelBools.getValue( this.isEmpty ) && outputBools.getValue( this.isEmpty );
+        return !( inputBools.getValue( this.isNotEmpty ) || fuelBools.getValue( this.isNotEmpty ) || outputBools.getValue( this.isNotEmpty ) );
     }
 
     @Override
@@ -293,11 +292,9 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
     }
 
     private void contentsChanged( ItemStackHandler handler , BooleanHolder bool , int slot ) {
-        bool.setValue( this.isEmpty , true );
         bool.setValue( this.isNotEmpty , false );
         for( int i = 0 ; i < handler.getSlots() ; i++ ) {
             if( !ItemStack.areItemStacksEqual( handler.getStackInSlot( i ) , ItemStack.EMPTY ) ) {
-                bool.setValue( this.isEmpty , false );
                 bool.setValue( this.isNotEmpty , true );
                 break;
             }

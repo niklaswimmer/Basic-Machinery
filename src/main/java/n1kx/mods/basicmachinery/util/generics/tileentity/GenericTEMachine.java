@@ -3,6 +3,7 @@ package n1kx.mods.basicmachinery.util.generics.tileentity;
 import mcp.MethodsReturnNonnullByDefault;
 import n1kx.mods.basicmachinery.util.IHasWorkingState;
 import n1kx.mods.basicmachinery.util.IRecipes;
+import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.RecipePart;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.item.ItemStack;
@@ -18,6 +19,7 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
 
     protected int timeLeft;
     protected int totalTimeNeeded;
+    private ItemStack[] inputs;
 
     protected GenericTEMachine( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
@@ -30,14 +32,32 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     public void update() {
         if( !super.world.isRemote ) {
             if( super.inputBools.getValue( super.isNotEmpty ) ) {
-                if( this.timeLeft > 0 ) {
-                    this.timeLeft--;
-
-                    if( this.timeLeft == 0 ) this.attemptMachine();
-
-                    super.markDirty();
+                if( super.inputBools.getValue( super.hasRecentlyChanged ) ) {
+                    if( this.inputs != null ) {
+                        ItemStack[] inputs = super.getInputs();
+                        if( !Methods.compareItemStacks( inputs , this.inputs ) ) {
+                            this.timeLeft = 0;
+                            this.totalTimeNeeded = 0;
+                            super.markDirty();
+                            this.startMachine();
+                            if( this.timeLeft == 0 ) if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
+                        }
+                    }
+                    else {
+                        this.inputs = super.getInputs();
+                    }
+                    super.inputBools.setValue( super.hasRecentlyChanged , false );
                 }
-                else this.startMachine();
+                else {
+                    if( this.timeLeft > 0 ) {
+                        this.timeLeft--;
+
+                        if( this.timeLeft == 0 ) this.attemptMachine();
+
+                        super.markDirty();
+                    }
+                    else this.startMachine();
+                }
             }
             else if( super.inputBools.getValue( super.hasRecentlyChanged ) ) {
                 this.timeLeft = 0;
@@ -66,12 +86,12 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
     }
 
     protected void attemptMachine() {
-        if( super.recipes != null && !super.inputBools.getValue( super.isEmpty ) ) {
+        if( super.recipes != null && super.inputBools.getValue( super.isNotEmpty ) ) {
             if( !super.outputBools.getValue( super.isFull ) ) {
                 this.totalTimeNeeded = 0;
 
                 ItemStack[] inputs = super.getInputs();
-                ItemStack[] outputs = this.recipes.getOutputs( inputs );
+                ItemStack[] outputs = super.recipes.getOutputs( inputs );
 
                 if( outputs != null ) {
                     boolean insertingPossible = true;

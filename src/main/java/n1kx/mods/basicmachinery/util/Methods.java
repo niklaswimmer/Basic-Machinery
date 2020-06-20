@@ -1,15 +1,11 @@
 package n1kx.mods.basicmachinery.util;
 
 import n1kx.mods.basicmachinery.BasicMachinery;
-import n1kx.mods.basicmachinery.tileentity.TileEntityCrusher;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.ForgeEventFactory;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Methods {
 
@@ -32,6 +28,16 @@ public class Methods {
 
     public static int getFuelValue( ItemStack stack ) {
         return TileEntityFurnace.getItemBurnTime( stack );
+    }
+
+    public static boolean compareItemStacks( ItemStack[] stacks , ItemStack[] stacks1 ) {
+        if( stacks.length != stacks1.length ) return false;
+        for( int i = 0 ; i < stacks.length ; i++ ) {
+            if( !( stacks[i].isItemEqual( stacks1[i] ) && stacks[i].getCount() == stacks1[i].getCount() ) ) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
