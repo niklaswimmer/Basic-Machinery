@@ -1,12 +1,12 @@
 package n1kx.mods.basicmachinery.util.generics.slot;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
-public class GenericSlot extends Slot {
+public class GenericSlot extends SlotItemHandler {
 
-    public GenericSlot( IInventory inventoryIn , int index , int xPosition , int yPosition ) {
-        super( inventoryIn , index , xPosition , yPosition );
+    public GenericSlot( IItemHandler handler , int index , int xPosition , int yPosition ) {
+        super( handler , index , xPosition , yPosition );
     }
 
 }

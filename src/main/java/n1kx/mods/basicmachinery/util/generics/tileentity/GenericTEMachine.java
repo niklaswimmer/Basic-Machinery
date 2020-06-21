@@ -66,6 +66,7 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
                 super.markDirty();
                 super.inputBools.setValue( super.hasRecentlyChanged , false );
             }
+            this.sendChangesToClient();
         }
     }
 
@@ -179,5 +180,7 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
         if( compound.hasKey( "timeLeft" ) ) timeLeft = compound.getInteger( "timeLeft" );
         if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( timeLeft > 0 , super.world , super.pos );
     }
+
+    protected abstract void sendChangesToClient();
 
 }

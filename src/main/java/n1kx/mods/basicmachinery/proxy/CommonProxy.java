@@ -33,7 +33,7 @@ public class CommonProxy {
 
     @SubscribeEvent
     public static void registerBlocks( RegistryEvent.Register<Block> register ) {
-        register.getRegistry().registerAll( BlockList.BLOCKS.toArray(new Block[0] ) );
+        register.getRegistry().registerAll( BlockList.BLOCKS.toArray( new Block[0] ) );
 
         GameRegistry.registerTileEntity( TileEntityCrusher.class , Objects.requireNonNull( BlockList.CRUSHER.getRegistryName() ) );
     }

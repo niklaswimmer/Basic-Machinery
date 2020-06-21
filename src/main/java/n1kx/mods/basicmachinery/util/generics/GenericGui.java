@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public abstract class GenericGui extends GuiContainer {
 
-    public final ResourceLocation texture;
+    public final ResourceLocation textureLocation;
 
     protected final InventoryPlayer playerInventory;
     protected final GenericTEInventory tileEntity;
@@ -25,7 +25,7 @@ public abstract class GenericGui extends GuiContainer {
         this.playerInventory = inventorySlotsIn.playerInventory;
         this.tileEntity = inventorySlotsIn.tileEntity;
 
-        this.texture = Methods.newGuiLocation( Objects.requireNonNull( tileEntity.block.getRegistryName() ) );
+        this.textureLocation = Methods.newGuiLocation( Objects.requireNonNull( tileEntity.block.getRegistryName() ) );
     }
 
     @Override
@@ -34,7 +34,7 @@ public abstract class GenericGui extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer( float partialTicks , int mouseX , int mouseY ) {
         GlStateManager.color( 1.0f , 1.0f , 1.0f , 1.0f );
-        super.mc.getTextureManager().bindTexture( this.texture );
+        super.mc.getTextureManager().bindTexture( this.textureLocation );
         super.drawTexturedModalRect( super.guiLeft , super.guiTop , 0 , 0 , super.xSize , super.ySize );
     }
 

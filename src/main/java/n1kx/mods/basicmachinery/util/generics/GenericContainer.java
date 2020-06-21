@@ -1,16 +1,15 @@
 package n1kx.mods.basicmachinery.util.generics;
 
+import mcp.MethodsReturnNonnullByDefault;
 import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.RecipePart;
 import n1kx.mods.basicmachinery.util.generics.tileentity.GenericTEInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import mcp.MethodsReturnNonnullByDefault;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
@@ -37,12 +36,6 @@ public abstract class GenericContainer extends Container {
     }
 
     @Override
-    public void addListener( IContainerListener listener ) {
-        super.addListener( listener );
-        listener.sendAllWindowProperties( this , this.tileEntity );
-    }
-
-    @Override
     public ItemStack transferStackInSlot( EntityPlayer playerIn , int index ) {
         ItemStack stack = ItemStack.EMPTY;
         Slot slot = super.inventorySlots.get( index );
@@ -51,29 +44,22 @@ public abstract class GenericContainer extends Container {
             ItemStack stack1 = slot.getStack();
             stack = stack1.copy();
 
-            //if the slot is either a input or a fuel slot --> items will get moved to an inventory slot (if possible)
             if( index < this.tileEntity.inventorySize - this.tileEntity.outputSlots ) {
                 if( !super.mergeItemStack( stack1 , this.tileEntity.inventorySize , super.inventoryItemStacks.size() , false ) ) return ItemStack.EMPTY;
             }
-            //if the slot is an output slot --> items will get moved to an inventory slot (if possible)
             else if( index >= this.tileEntity.inputSlots + this.tileEntity.fuelSlots && index < this.tileEntity.inventorySize ) {
                 if( !this.mergeItemStack( stack1 , this.tileEntity.inventorySize , 36 + this.tileEntity.inventorySize , true ) ) return ItemStack.EMPTY;
             }
-            //if the slot is a normal player inventory slot
             else if( index >= this.tileEntity.inventorySize ) {
-                //if the items in the slot are inputs && there are input slots --> items will get moved to an input slot (if possible)
                 if( this.tileEntity.recipes != null ) if( this.tileEntity.recipes.areInRecipe( RecipePart.INPUT , stack1 ) && this.tileEntity.inputSlots > 0 ) {
                     if( !this.mergeItemStack( stack1 , 0 , this.tileEntity.inputSlots , false ) ) return ItemStack.EMPTY;
                 }
-                //if the items in the slot are fuel && there are fuel slots --> items will get moved to a fuel slot (if possible)
                 else if( Methods.isFuel( stack1 ) && this.tileEntity.fuelSlots > 0 ) {
                     if( !this.mergeItemStack( stack1 , this.tileEntity.inputSlots + this.tileEntity.fuelSlots - 1 , this.tileEntity.inventorySize - this.tileEntity.outputSlots , false ) ) return ItemStack.EMPTY;
                 }
-                //if the slot is not in the hotbar --> items will get moved to hotbar (if possible)
                 else if( index > this.tileEntity.inventorySize && index < this.tileEntity.inventorySize + 27 ) {
                     if( !this.mergeItemStack( stack1 , this.tileEntity.inventorySize + 27 , this.tileEntity.inventorySize + 36 , false ) ) return ItemStack.EMPTY;
                 }
-                //if the slot in in the hotbar --> items will get moved to not hotbar (if possible)
                 else if( index >= this.tileEntity.inventorySize + 27 && index < this.tileEntity.inventorySize + 36 ) {
                     if( !this.mergeItemStack( stack1 , this.tileEntity.inventorySize , this.tileEntity.inventorySize + 27 , false ) ) return ItemStack.EMPTY;
                 }
@@ -89,13 +75,8 @@ public abstract class GenericContainer extends Container {
     }
 
     @Override
-    public void updateProgressBar( int id , int data ) {
-        this.tileEntity.setField( id , data );
-    }
-
-    @Override
     public boolean canInteractWith( EntityPlayer playerIn ) {
-        return this.tileEntity.isUsableByPlayer( playerIn );
+        return this.tileEntity.canInteractWith( playerIn );
     }
 
 }

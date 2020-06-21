@@ -1,16 +1,16 @@
 package n1kx.mods.basicmachinery.util.generics.slot;
 
 import n1kx.mods.basicmachinery.util.Methods;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class GenericFuelSlot extends GenericSlot {
 
-    public GenericFuelSlot( IInventory inventoryIn , int index , int xPosition , int yPosition ) {
-        super( inventoryIn , index , xPosition , yPosition );
+    public GenericFuelSlot( IItemHandler handler , int index , int xPosition , int yPosition ) {
+        super( handler , index , xPosition , yPosition );
     }
 
     @Override

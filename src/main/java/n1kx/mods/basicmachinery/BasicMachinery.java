@@ -1,5 +1,6 @@
 package n1kx.mods.basicmachinery;
 
+import n1kx.mods.basicmachinery.network.PacketHandler;
 import n1kx.mods.basicmachinery.proxy.CommonProxy;
 import n1kx.mods.basicmachinery.proxy.GuiProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -40,17 +41,20 @@ public class BasicMachinery {
     @Mod.EventHandler
     public void preInit( FMLPreInitializationEvent event ) {
         logger = event.getModLog();
-        logger.info( "preInit" );
-    }
 
-    @Mod.EventHandler
-    public void init( FMLInitializationEvent e ) {
-        logger.info( "init" );
         NetworkRegistry.INSTANCE.registerGuiHandler( BasicMachinery.instance , new GuiProxy() );
+        PacketHandler.registerMessages();
+
+        BasicMachinery.proxy.preInit( event );
     }
 
     @Mod.EventHandler
-    public void postInit( FMLPostInitializationEvent e ) {
-        logger.info( "postInit" );
+    public void init( FMLInitializationEvent event ) {
+        BasicMachinery.proxy.init( event );
+    }
+
+    @Mod.EventHandler
+    public void postInit( FMLPostInitializationEvent event ) {
+        BasicMachinery.proxy.postInit( event );
     }
 }

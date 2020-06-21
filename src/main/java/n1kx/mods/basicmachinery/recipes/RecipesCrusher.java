@@ -13,6 +13,4 @@ public class RecipesCrusher extends GenericRecipes {
         super.addRecipe( new ItemStack[]{ new ItemStack( Blocks.IRON_ORE ) } , new ItemStack[]{ new ItemStack( ItemList.CRUSHED_IRON , 2 ) } , 300 );
     }
 
-
-
 }

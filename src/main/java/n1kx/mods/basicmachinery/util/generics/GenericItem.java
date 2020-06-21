@@ -24,4 +24,5 @@ public class GenericItem extends Item implements IHasModel {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation( this , 0 , new ModelResourceLocation( Objects.requireNonNull( super.getRegistryName() ).toString() ) );
     }
+
 }

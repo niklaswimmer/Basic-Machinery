@@ -38,7 +38,6 @@ public abstract class GenericRecipes implements IRecipes {
         if( list == null ) throw new IllegalArgumentException( "invalid recipe part: "+ part );
 
         for( ItemStack stack1 : stacks ) {
-            BasicMachinery.logger.info( "checking for "+stack1 );
             boolean bool1 = false;
             for( ArrayList<ItemStack> stackList : list ) {
                 for( ItemStack stack : stackList ) {

@@ -18,10 +18,6 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
     protected int burnTimeLeft;
     protected int totalBurnTime;
 
-    public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes ) {
-        this( inputSlots , outputSlots , fuelSlots , block , recipes , null );
-    }
-
     public GenericTEMachineFueled( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         super( inputSlots , outputSlots , fuelSlots , block , recipes , customName );
     }
@@ -83,6 +79,7 @@ public abstract class GenericTEMachineFueled extends GenericTEMachine {
                     }
                 }
                 else super.fuelBools.setValue( super.hasRecentlyChanged , false );
+                this.sendChangesToClient();
             }
         }
     }

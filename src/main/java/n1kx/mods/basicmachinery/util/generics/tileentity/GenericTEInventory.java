@@ -8,26 +8,26 @@ import n1kx.mods.basicmachinery.util.Methods;
 import n1kx.mods.basicmachinery.util.generics.GenericBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class GenericTEInventory extends TileEntity implements IInventory , IDropItemsOnBreak {
+public abstract class GenericTEInventory extends TileEntity implements IDropItemsOnBreak {
     protected final String isNotEmpty = "isNotEmpty";
     protected final String isFull = "isFull";
     protected final String hasRecentlyChanged = "hasRecentlyChanged";
@@ -46,14 +46,6 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
 
     public final IRecipes recipes;
 
-    /**
-     * constructor
-     * @param inputSlots the number of input slots (does not include fuel slots)
-     * @param outputSlots the number of output slots
-     * @param fuelSlots the number of fuel slots
-     * @param block the block this tile entity belongs to
-     * @param customName the custom name for this tile entity (can be null; in case of null the unlocalized name of the block gets used)
-     */
     protected GenericTEInventory( int inputSlots , int outputSlots , int fuelSlots , GenericBlock block , @Nullable IRecipes recipes , @Nullable String customName ) {
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
@@ -144,143 +136,25 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         return compound;
     }
 
-    @Override
-    public int getSizeInventory() {
-        return this.inventorySize;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return !( inputBools.getValue( this.isNotEmpty ) || fuelBools.getValue( this.isNotEmpty ) || outputBools.getValue( this.isNotEmpty ) );
-    }
-
-    @Override
-    public ItemStack getStackInSlot( int index ) {
-        ItemStack returnStack = ItemStack.EMPTY;
-        if( index < this.inputSlots ) {
-            returnStack = this.inputHandler.getStackInSlot( index );
-        }
-        else if( index < this.inputSlots + this.fuelSlots ) {
-            returnStack = this.fuelHandler.getStackInSlot( index - this.inputSlots );
-        }
-        else if( index < this.inputSlots + this.fuelSlots + this.outputSlots ) {
-            returnStack = this.outputHandler.getStackInSlot( index - this.inputSlots - this.fuelSlots );
-        }
-        return returnStack;
-    }
-
-    @Override
-    public ItemStack decrStackSize( int index , int count ) {
-        ItemStack returnStack = ItemStack.EMPTY;
-        if( index < this.inputSlots ) {
-            returnStack = this.inputHandler.extractItem( index , count , false );
-        }
-        else if( index < this.inputSlots + this.fuelSlots ) {
-            returnStack = this.fuelHandler.extractItem( index - this.inputSlots , count , false );
-        }
-        else if( index < this.inputSlots + this.fuelSlots + this.outputSlots ) {
-            returnStack = this.outputHandler.extractItem( index - this.inputSlots - this.fuelSlots , count , false );
-        }
-        return returnStack;
-    }
-
-    @Override
-    public ItemStack removeStackFromSlot( int index ) {
-        ItemStack returnStack = ItemStack.EMPTY;
-        if( index < this.inputSlots ) {
-            returnStack = this.inputHandler.extractItem( index , this.inputHandler.getStackInSlot( index ).getCount() , false );
-            this.inputHandler.setStackInSlot( index , ItemStack.EMPTY );
-        }
-        else if( index < this.inputSlots + this.fuelSlots ) {
-            returnStack = this.fuelHandler.extractItem( index - this.inputSlots , this.fuelHandler.getStackInSlot( index ).getCount() , false );
-            this.fuelHandler.setStackInSlot( index - this.inputSlots , ItemStack.EMPTY );
-        }
-        else if( index < this.inputSlots + this.fuelSlots + this.outputSlots ) {
-            returnStack = this.outputHandler.extractItem( index - this.inputSlots - this.fuelSlots , this.outputHandler.getStackInSlot( index ).getCount() , false );
-            this.outputHandler.setStackInSlot( index - this.inputSlots - this.fuelSlots , ItemStack.EMPTY );
-        }
-        return returnStack;
-    }
-
-    @Override
-    public void setInventorySlotContents( int index , ItemStack stack ) {
-        if( index < this.inputSlots ) {
-            this.inputHandler.setStackInSlot( index , stack );
-        }
-        else if( index < this.inputSlots + this.fuelSlots ) {
-            this.fuelHandler.setStackInSlot( index - this.inputSlots , stack );
-        }
-        else if( index < this.inputSlots + this.fuelSlots + this.outputSlots ) {
-            this.outputHandler.setStackInSlot( index - this.inputSlots - this.fuelSlots , stack );
-        }
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUsableByPlayer( EntityPlayer player ) {
-        return super.world.getTileEntity( super.pos ) == this && player.getDistanceSq( (double)super.pos.getX() + 0.5 , (double)super.pos.getY() + 0.5 , (double)super.pos.getZ() + 0.5 ) <= 64.0;
-    }
-
-    @Override
-    public void openInventory( EntityPlayer player ) {}
-
-    @Override
-    public void closeInventory( EntityPlayer player ) {}
-
-    @Override
-    public boolean isItemValidForSlot( int index , ItemStack stack ) {
-        return index < this.inputSlots + this.fuelSlots;
-    }
-
-    @Override
     public abstract int getField( int id );
 
-    @Override
     public abstract void setField( int id , int value );
 
-    @Override
     public abstract int getFieldCount();
 
     @Override
-    public void clear() {
-        for( int i = 0 ; i < this.inputHandler.getSlots() ; i++ ) {
-            this.inputHandler.setStackInSlot( i , ItemStack.EMPTY );
-        }
-        for( int i = 0 ; i < this.fuelHandler.getSlots() ; i++ ) {
-            this.fuelHandler.setStackInSlot( i , ItemStack.EMPTY );
-        }
-        for( int i = 0 ; i < this.outputHandler.getSlots() ; i++ ) {
-            this.outputHandler.setStackInSlot( i , ItemStack.EMPTY );
-        }
-    }
-
-    @Override
-    public String getName() {
-        return this.hasCustomName() ? this.customName : Objects.requireNonNull( this.block.getRegistryName() ).getPath();
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return this.customName != null;
-    }
-
-    @Override
     public void dropInventoryItems( World worldIn , BlockPos pos ) {
-        InventoryHelper.dropInventoryItems( worldIn , pos , this );
+        for( int i = 0 ; i < this.combinedHandler.getSlots() ; i++ ) {
+            ItemStack stack = this.combinedHandler.getStackInSlot( i );
+            if( !stack.isEmpty() ) {
+                InventoryHelper.spawnItemStack( super.world , super.pos.getX() , super.pos.getY() , super.pos.getZ() , stack );
+            }
+        }
     }
 
     @Override
     public boolean shouldRefresh( World worldIn , BlockPos pos , IBlockState oldState , IBlockState newState ) {
         return oldState.getBlock() != newState.getBlock();
-    }
-
-    @Override
-    public ITextComponent getDisplayName() {
-        return new TextComponentString( this.getName() );
     }
 
     public ItemStack[] getInputs() {
@@ -302,7 +176,7 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         if( bool.getValue( this.isNotEmpty ) ) {
             bool.setValue( this.isFull , true );
             for( int i = 0 ; i < handler.getSlots() ; i++ ) {
-                if( handler.getStackInSlot( i ).getCount() != this.getInventoryStackLimit() ) {
+                if( handler.getStackInSlot( i ).getCount() != handler.getStackInSlot( i ).getMaxStackSize() ) {
                     bool.setValue( this.isFull , false );
                 }
             }
@@ -312,4 +186,28 @@ public abstract class GenericTEInventory extends TileEntity implements IInventor
         }
         bool.setValue( this.hasRecentlyChanged , true );
     }
+
+    @Override
+    public boolean hasCapability( Capability<?> capability , @Nullable EnumFacing facing ) {
+        if( capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) return true;
+        return super.hasCapability( capability , facing );
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability( Capability<T> capability , @Nullable EnumFacing facing ) {
+        if( capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast( this.combinedHandler );
+        }
+        return super.getCapability( capability , facing );
+    }
+
+    public boolean canInteractWith(EntityPlayer playerIn) {
+        return !isInvalid() && playerIn.getDistanceSq( pos.add( 0.5D , 0.5D , 0.5D ) ) <= 64D;
+    }
+
+    public NetworkRegistry.TargetPoint getTargetPoint() {
+        return new NetworkRegistry.TargetPoint( super.world.provider.getDimension() , super.pos.getX() , super.pos.getY() , super.pos.getZ() , 0 );
+    }
+
 }
