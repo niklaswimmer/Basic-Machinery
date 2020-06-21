@@ -40,6 +40,7 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
                             this.totalTimeNeeded = 0;
                             super.markDirty();
                             this.startMachine();
+                            this.inputs = inputs;
                             if( this.timeLeft == 0 ) if( super.block instanceof IHasWorkingState ) ( (IHasWorkingState)super.block ).setWorkingState( false , super.world , super.pos );
                         }
                     }
@@ -48,16 +49,14 @@ public abstract class GenericTEMachine extends GenericTEInventory implements ITi
                     }
                     super.inputBools.setValue( super.hasRecentlyChanged , false );
                 }
-                else {
-                    if( this.timeLeft > 0 ) {
-                        this.timeLeft--;
+                if( this.timeLeft > 0 ) {
+                    this.timeLeft--;
 
-                        if( this.timeLeft == 0 ) this.attemptMachine();
+                    if( this.timeLeft == 0 ) this.attemptMachine();
 
-                        super.markDirty();
-                    }
-                    else this.startMachine();
+                    super.markDirty();
                 }
+                else this.startMachine();
             }
             else if( super.inputBools.getValue( super.hasRecentlyChanged ) ) {
                 this.timeLeft = 0;

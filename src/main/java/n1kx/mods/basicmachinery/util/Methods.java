@@ -33,11 +33,13 @@ public class Methods {
     public static boolean compareItemStacks( ItemStack[] stacks , ItemStack[] stacks1 ) {
         if( stacks.length != stacks1.length ) return false;
         for( int i = 0 ; i < stacks.length ; i++ ) {
-            if( !( stacks[i].isItemEqual( stacks1[i] ) && stacks[i].getCount() == stacks1[i].getCount() ) ) {
-                return false;
-            }
+            if( !( stacks[i].isItemEqual( stacks1[i] ) ) ) return false;
         }
         return true;
+    }
+
+    public static boolean areItemStacksEqual( ItemStack stack , ItemStack stack1 ) {
+        return stack.isItemEqual( stack1 ) && stack.getCount() == stack1.getCount();
     }
 
 }

@@ -1,6 +1,5 @@
 package n1kx.mods.basicmachinery.util.generics;
 
-import n1kx.mods.basicmachinery.BasicMachinery;
 import n1kx.mods.basicmachinery.util.IRecipes;
 import n1kx.mods.basicmachinery.util.RecipePart;
 import net.minecraft.item.ItemStack;

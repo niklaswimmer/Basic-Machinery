@@ -197,7 +197,18 @@ public abstract class GenericTEInventory extends TileEntity implements IDropItem
     @Override
     public <T> T getCapability( Capability<T> capability , @Nullable EnumFacing facing ) {
         if( capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast( this.combinedHandler );
+            if( facing == null ) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast( this.combinedHandler );
+            }
+            else if( facing == EnumFacing.UP ) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast( this.inputHandler );
+            }
+            else if( facing == EnumFacing.DOWN ) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast( this.outputHandler );
+            }
+            else {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast( this.fuelHandler );
+            }
         }
         return super.getCapability( capability , facing );
     }
